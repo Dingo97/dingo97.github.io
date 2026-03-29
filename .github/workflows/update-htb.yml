@@ -1,0 +1,164 @@
+name: Update HTB Stats
+
+on:
+  schedule:
+    - cron: '0 6 * * *' 
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-htb:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Fetch HTB data and update JSON
+        env:
+          HTB_TOKEN: ${{ secrets.HTB_TOKEN }}
+          HTB_USER_ID: '110118'
+        run: |
+          node << 'SCRIPT'
+          const https = require('https');
+
+          const HTB_TOKEN = process.env.HTB_TOKEN;
+          const HTB_USER_ID = process.env.HTB_USER_ID;
+          const BASE_URL = 'labs.hackthebox.com';
+
+          if (!HTB_TOKEN) {
+            console.error('HTB_TOKEN secret is not set!');
+            process.exit(1);
+          }
+
+          function apiGet(path) {
+            return new Promise((resolve, reject) => {
+              const opts = {
+                hostname: BASE_URL,
+                path: path,
+                headers: {
+                  'Authorization': `Bearer ${HTB_TOKEN}`,
+                  'Accept': 'application/json'
+                }
+              };
+              https.get(opts, (res) => {
+                let body = '';
+                res.on('data', chunk => body += chunk);
+                res.on('end', () => {
+                  if (res.statusCode !== 200) {
+                    reject(new Error(`HTTP ${res.statusCode}: ${body.slice(0, 200)}`));
+                    return;
+                  }
+                  try { resolve(JSON.parse(body)); }
+                  catch (e) { reject(e); }
+                });
+              }).on('error', reject);
+            });
+          }
+
+          function pointsToDifficulty(points, type) {
+            if (type === 'root') {
+              if (points >= 50) return 'insane';
+              if (points >= 40) return 'hard';
+              if (points >= 30) return 'medium';
+              return 'easy';
+            }
+            if (points >= 25) return 'insane';
+            if (points >= 20) return 'hard';
+            if (points >= 15) return 'medium';
+            return 'easy';
+          }
+
+          async function main() {
+            console.log('Fetching HTB profile...');
+            const profileData = await apiGet(`/api/v4/user/profile/basic/${HTB_USER_ID}`);
+            const profile = profileData.profile;
+
+            console.log('Fetching HTB activity...');
+            const activityData = await apiGet(`/api/v4/user/profile/activity/${HTB_USER_ID}`);
+            const activities = activityData.profile.activity;
+
+            const rootedMachines = [];
+            const seenMachineIds = new Set();
+            for (const a of activities) {
+              if (a.object_type === 'machine' && a.type === 'root' && !seenMachineIds.has(a.id)) {
+                seenMachineIds.add(a.id);
+                rootedMachines.push(a);
+              }
+            }
+
+            const recentMachines = [];
+            for (const m of rootedMachines.slice(0, 10)) {
+              let os = 'linux';
+              let difficulty = pointsToDifficulty(m.points, 'root');
+              try {
+                const machineData = await apiGet(`/api/v4/machine/profile/${m.id}`);
+                if (machineData.info) {
+                  os = (machineData.info.os || 'linux').toLowerCase();
+                  difficulty = (machineData.info.difficultyText || difficulty).toLowerCase();
+                }
+              } catch (e) {
+                console.warn(`Could not fetch details for machine ${m.name} (${m.id}): ${e.message}`);
+              }
+              recentMachines.push({
+                name: m.name,
+                os: os,
+                difficulty: difficulty,
+                date: m.date.split('T')[0]
+              });
+            }
+
+            const challenges = activities
+              .filter(a => a.object_type === 'challenge')
+              .slice(0, 8)
+              .map(c => ({
+                name: c.name,
+                category: c.challenge_category || 'Misc',
+                date: c.date.split('T')[0]
+              }));
+
+            const output = {
+              updated: new Date().toISOString(),
+              profile: {
+                username: profile.name,
+                rank: profile.rank,
+                nextRank: profile.next_rank,
+                rankProgress: profile.current_rank_progress,
+                points: profile.points,
+                ranking: profile.ranking,
+                userOwns: profile.user_owns,
+                systemOwns: profile.system_owns,
+                country: profile.country_code,
+                joinedDate: profile.joined_date ? profile.joined_date.split('T')[0] : null
+              },
+              recentMachines: recentMachines,
+              recentChallenges: challenges
+            };
+
+            require('fs').writeFileSync('htb-data.json', JSON.stringify(output, null, 2) + '\n');
+            console.log(`Done! ${recentMachines.length} machines, ${challenges.length} challenges written.`);
+          }
+
+          main().catch(err => {
+            console.error('Failed:', err.message);
+            process.exit(1);
+          });
+          SCRIPT
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add htb-data.json
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: update HTB stats [automated]"
+            git push
+          fi
