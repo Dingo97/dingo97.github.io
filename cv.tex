@@ -1,0 +1,170 @@
+\documentclass[letterpaper,11pt]{article}
+
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+
+% Font setup - Times New Roman like (similar to Harvard template)
+\usepackage{mathptmx}
+
+\pagestyle{fancy}
+\fancyhf{} % clear all header and footer fields
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Adjust margins
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+% Sections formatting
+\titleformat{\section}{
+  \vspace{-4pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+
+% Custom commands
+\newcommand{\resumeItem}[1]{
+  \item\small{
+    {#1 \vspace{-2pt}}
+  }
+}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-1pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-5pt}
+}
+
+\newcommand{\resumeProjectHeading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \small#1 & #2 \\
+    \end{tabular*}\vspace{-5pt}
+}
+
+\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
+
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+%-------------------------------------------
+%%%%%%  CV STARTS HERE  %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{document}
+
+%----------HEADING----------
+\begin{center}
+    \textbf{\Huge \scshape Davide Di Matteo} \\ \vspace{1pt}
+    Via Taranto 178, Roma, 00182 \\ \vspace{1pt}
+    \small (+39) 346 134 5120 $|$ \href{mailto:davidedimatteo97@gmail.com}{\underline{davidedimatteo97@gmail.com}} $|$ 
+    \href{https://linkedin.com/in/davide-di-matteo}{\underline{linkedin.com/in/davide-di-matteo}}
+\end{center}
+
+
+%-----------EDUCATION-----------
+\section{Education}
+  \resumeSubHeadingListStart
+    \resumeSubheading
+      {Università degli Studi di Roma "Tor Vergata"}{Roma, Italia}
+      {Laurea Triennale in Informatica}{Set 2016 -- 2022}
+      \resumeItemListStart
+        \resumeItem{\textbf{Tesi:} "Analisi di sicurezza e capacità dei software Anti Malware su Linux" -- Sviluppo di tecniche di evasione malware (Process Injection, Memory Shellcode) in C e Python.}
+      \resumeItemListEnd
+
+    \resumeSubheading
+      {Certificazioni Professionali}{}
+      {Cybersecurity \& Networking}{}
+      \resumeItemListStart
+        \resumeItem{\textbf{Certified Ethical Hacker (CEH)} -- EC-Council (Nov 2025)}
+        \resumeItem{\textbf{CompTIA Security+} -- CompTIA (Ott 2017)}
+      \resumeItemListEnd
+  \resumeSubHeadingListEnd
+
+
+%-----------EXPERIENCE-----------
+\section{Experience}
+  \resumeSubHeadingListStart
+
+    \resumeSubheading
+      {Leonardo S.p.A.}{Roma, Italia}
+      {Cyber Security Assurance and Red Team}{Nov 2024 -- Presente}
+      \resumeItemListStart
+        \resumeItem{Eseguire attività di Vulnerability Assessment e Penetration Testing su sistemi INFOSEC e applicazioni critiche, utilizzando Nessus, Burp Suite e Nmap per identificare vulnerabilità exploitable.}
+        \resumeItem{Supportare le certificazioni di sicurezza Common Criteria (ISO/IEC 15408), gestendo la redazione di documentazione tecnica e remediation plan per la conformità normativa.}
+        \resumeItem{Collaborare con il Laboratorio Valutazione Sicurezza (LVS) per analizzare la resistenza dei prodotti agli attacchi e sviluppare procedure di test per il Laboratorio Accreditato di Prova (LAP).}
+      \resumeItemListEnd
+
+    \resumeSubheading
+      {Sipal S.p.A.}{Roma, Italia}
+      {Cybersecurity Analyst $|$ Ce.Va. Operator}{Dic 2022 -- Nov 2024}
+      \resumeItemListStart
+        \resumeItem{Condotto analisi dei requisiti di sicurezza e penetration test su prodotti clienti per garantire la conformità agli standard Common Criteria.}
+        \resumeItem{Utilizzato strumenti di analisi statica e dinamica (SAST/DAST) e scanner di vulnerabilità per individuare e mitigare falle di sicurezza nel codice e nell'infrastruttura.}
+        \resumeItem{Collaborato con i team di sviluppo per la mitigazione delle vulnerabilità e la stesura di documentazione tecnica di valutazione.}
+      \resumeItemListEnd
+
+  \resumeSubHeadingListEnd
+
+
+%-----------PROJECTS-----------
+\section{Technical Projects}
+    \resumeSubHeadingListStart
+      \resumeProjectHeading
+          {\textbf{Linux Malware Evasion Research} $|$ \emph{C, Python}}{Tesi Sperimentale}
+          \resumeItemListStart
+            \resumeItem{Progettato e sviluppato malware custom in C e Python per testare l'efficacia degli antivirus in ambiente Linux.}
+            \resumeItem{Implementato tecniche avanzate di evasione (Process Injection, Self-Injection, Direct Memory Shellcode Writing) per bypassare i controlli signature-based.}
+          \resumeItemListEnd
+      \resumeProjectHeading
+          {\textbf{Sviluppo Piattaforma E-commerce Sicura} $|$ \emph{PHP, MySQL, HTML/CSS}}{Progetto Accademico}
+          \resumeItemListStart
+            \resumeItem{Sviluppato un portale e-commerce full-stack implementando misure di sicurezza difensiva.}
+            \resumeItem{Progettato sistema di gestione ordini con validazione input rigorosa per prevenire SQL Injection e XSS.}
+          \resumeItemListEnd
+      \resumeProjectHeading
+          {\textbf{Database Management System (SoundCloud Clone)} $|$ \emph{MySQL, MongoDB}}{Progetto Accademico}
+          \resumeItemListStart
+            \resumeItem{Progettato schema ER e implementato database relazionali e NoSQL ottimizzati per alte prestazioni.}
+          \resumeItemListEnd
+    \resumeSubHeadingListEnd
+
+
+%-----------SKILLS-----------
+\section{Technical Skills}
+ \begin{itemize}[leftmargin=0.15in, label={}]
+    \small{\item{
+     \textbf{Vulnerability Assessment \& Pentesting}{: Nessus, Burp Suite, Nmap, Metasploit, SQLmap, Wireshark, OWASP Top 10} \\
+     \textbf{Security Standards}{: Common Criteria (ISO/IEC 15408), CEH methodology, PTES} \\
+     \textbf{Programmazione}{: C, Python (Scripting \& Exploit Dev), Bash, PHP, SQL, HTML/CSS, JavaScript} \\
+     \textbf{Sistemi Operativi}{: Linux (Admin \& Hardening, Kali, Ubuntu), Windows} \\
+     \textbf{Lingue}{: Italiano (Madrelingua), Inglese (B2 - Tecnico)}
+    }}
+ \end{itemize}
+
+
+%-------------------------------------------
+\end{document}
