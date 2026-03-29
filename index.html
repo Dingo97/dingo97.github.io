@@ -1,0 +1,1778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Davide Di Matteo — Cyber Security Analyst & Red Team Operator. Vulnerability Assessment, Penetration Testing, Common Criteria @ Leonardo S.p.A.">
+    <meta name="keywords" content="cybersecurity, red team, penetration testing, vulnerability assessment, CEH, common criteria, rome, italy, leonardo">
+    <meta name="author" content="Davide Di Matteo">
+    <meta property="og:title" content="Davide Di Matteo | Cyber Security Analyst & Red Team">
+    <meta property="og:description" content="Cybersecurity Portfolio — VA/PT, Red Team, Common Criteria @ Leonardo S.p.A.">
+    <meta property="og:type" content="website">
+    
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self';">
+    
+    <title>Davide Di Matteo | Cyber Security Analyst & Red Team</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%230a0a0a'/%3E%3Ctext x='16' y='24' text-anchor='middle' font-family='monospace' font-size='22' font-weight='bold' fill='%23ffb000'%3ED%3C/text%3E%3C/svg%3E">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* ══════════════════════════════════════════════
+           THEME SYSTEM
+           ══════════════════════════════════════════════ */
+        :root {
+            --bg-color: #0a0a0a;
+            --bg-secondary: #111111;
+            --panel-bg: #141414;
+            --panel-bg-hover: #1a1a1a;
+            --text-main: #e0e0e0;
+            --text-muted: #888888;
+            --accent: #ffb000;
+            --accent-rgb: 255, 176, 0;
+            --accent-dim: rgba(255, 176, 0, 0.15);
+            --accent-glow: rgba(255, 176, 0, 0.4);
+            --border: #2a2a2a;
+            --border-light: #3a3a3a;
+            --glitch-1: #ff3c00;
+            --glitch-2: #00ff9f;
+            --success: #4caf50;
+        }
+        [data-theme="red"] {
+            --accent: #ff003c;
+            --accent-rgb: 255, 0, 60;
+            --accent-dim: rgba(255, 0, 60, 0.15);
+            --accent-glow: rgba(255, 0, 60, 0.4);
+            --glitch-1: #00ffea;
+            --glitch-2: #ff00ff;
+        }
+        [data-theme="blue"] {
+            --accent: #00e5ff;
+            --accent-rgb: 0, 229, 255;
+            --accent-dim: rgba(0, 229, 255, 0.15);
+            --accent-glow: rgba(0, 229, 255, 0.4);
+            --glitch-1: #ff00ff;
+            --glitch-2: #ffb000;
+        }
+        [data-theme="green"] {
+            --accent: #9fef00;
+            --accent-rgb: 159, 239, 0;
+            --accent-dim: rgba(159, 239, 0, 0.15);
+            --accent-glow: rgba(159, 239, 0, 0.4);
+            --glitch-1: #ff3c00;
+            --glitch-2: #00e5ff;
+        }
+
+        /* ══════════════════════════════════════════════
+           BOOT SEQUENCE OVERLAY
+           ══════════════════════════════════════════════ */
+        #boot-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 99999; display: flex;
+            flex-direction: column; justify-content: center; align-items: center;
+            font-family: 'JetBrains Mono', 'IBM Plex Mono', monospace;
+            transition: opacity 0.8s ease;
+        }
+        #boot-screen.fade-out { opacity: 0; pointer-events: none; }
+        #boot-text {
+            color: #ffffff; font-size: 0.85rem; max-width: 600px; width: 90%;
+            line-height: 1.8; white-space: pre-wrap;
+        }
+        #boot-text .boot-accent { color: var(--accent); }
+        #boot-text .boot-ok { color: #4caf50; }
+        #boot-text .boot-warn { color: #ff9800; }
+        .boot-progress {
+            width: 300px; height: 3px; background: #222; margin-top: 30px; overflow: hidden;
+        }
+        .boot-progress-bar {
+            height: 100%; width: 0; background: #ffffff;
+            transition: width 0.3s ease;
+        }
+
+        /* ══════════════════════════════════════════════
+           BASE & SCROLLBAR
+           ══════════════════════════════════════════════ */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; font-size: 16px; }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-color); }
+        ::-webkit-scrollbar-thumb { 
+            background: var(--border); border-radius: 4px;
+            border: 2px solid var(--bg-color);
+        }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'IBM Plex Mono', monospace;
+            line-height: 1.7;
+            overflow-x: hidden;
+            padding-bottom: 60px;
+            transition: background-color 0.4s, color 0.4s;
+        }
+
+        /* Scanlines */
+        body::after {
+            content: ""; display: block; position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.15) 50%),
+                        linear-gradient(90deg, rgba(255,0,0,0.03), rgba(0,255,0,0.01), rgba(0,0,255,0.03));
+            z-index: 2; background-size: 100% 2px, 3px 100%; pointer-events: none;
+            opacity: 0.6;
+        }
+
+        /* Matrix Canvas Background */
+        #matrix-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0; opacity: 0.04; pointer-events: none;
+        }
+
+        /* ══════════════════════════════════════════════
+           TYPOGRAPHY
+           ══════════════════════════════════════════════ */
+        h1, h2, h3 { text-transform: uppercase; letter-spacing: -0.5px; }
+        h1 { 
+            font-size: clamp(2rem, 5vw, 3rem); color: var(--text-main); 
+            margin-bottom: 0.5rem; margin-top: 0.5rem; position: relative; display: inline-block;
+            font-family: 'JetBrains Mono', monospace; font-weight: 700;
+        }
+
+        /* Glitch effect on h1 — activated via JS after typewriter completes */
+        .glitch-active { position: relative; }
+        .glitch-active::before, .glitch-active::after {
+            content: attr(data-text); position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%; overflow: hidden;
+            pointer-events: none;
+        }
+        .glitch-active::before {
+            color: var(--glitch-1); z-index: -1;
+            animation: glitch-1 8s infinite linear;
+        }
+        .glitch-active::after {
+            color: var(--glitch-2); z-index: -2;
+            animation: glitch-2 6s infinite linear;
+        }
+        @keyframes glitch-1 {
+            0%, 96%, 100% { clip-path: inset(0 0 0 0); transform: translate(0); opacity: 0; }
+            96.5% { clip-path: inset(20% 0 60% 0); transform: translate(-2px, 0); opacity: 0.7; }
+            97% { clip-path: inset(60% 0 10% 0); transform: translate(2px, 0); opacity: 0.7; }
+            97.5% { clip-path: inset(40% 0 30% 0); transform: translate(-1px, 1px); opacity: 0.5; }
+            98% { clip-path: inset(0 0 0 0); transform: translate(0); opacity: 0; }
+        }
+        @keyframes glitch-2 {
+            0%, 94%, 100% { clip-path: inset(0 0 0 0); transform: translate(0); opacity: 0; }
+            94.5% { clip-path: inset(50% 0 20% 0); transform: translate(1px, -1px); opacity: 0.6; }
+            95% { clip-path: inset(10% 0 70% 0); transform: translate(-1px, 0); opacity: 0.6; }
+            95.5% { clip-path: inset(0 0 0 0); transform: translate(0); opacity: 0; }
+        }
+
+        .typing-cursor::after {
+            content: '█'; animation: blink 1s step-end infinite;
+            color: var(--accent); margin-left: 2px; font-weight: 400;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        h2 {
+            font-size: 1.4rem; color: var(--accent); border-bottom: 1px solid var(--border);
+            padding-bottom: 12px; margin-bottom: 35px; margin-top: 70px;
+            display: flex; align-items: center; gap: 10px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        h2::before { content: ">>"; color: var(--text-muted); font-size: 0.9rem; opacity: 0.6; }
+
+        a { color: var(--accent); text-decoration: none; transition: all 0.3s ease; }
+        a:hover { text-shadow: 0 0 8px var(--accent-glow); }
+        p { margin-bottom: 1rem; color: var(--text-muted); }
+        strong { color: var(--text-main); font-weight: 600; }
+
+        /* ══════════════════════════════════════════════
+           SCROLL REVEAL ANIMATIONS
+           ══════════════════════════════════════════════ */
+        .reveal {
+            opacity: 0; transform: translateY(30px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                        transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+
+        /* ══════════════════════════════════════════════
+           HEADER
+           ══════════════════════════════════════════════ */
+        header {
+            border-bottom: 1px solid var(--border); padding: 15px 0; position: sticky; top: 0;
+            background: rgba(10, 10, 10, 0.92); z-index: 1000;
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            transition: box-shadow 0.3s;
+        }
+        header.scrolled { box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+        .container { max-width: 1050px; margin: 0 auto; padding: 0 25px; position: relative; z-index: 3; }
+        .nav-flex { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        
+        .logo { 
+            font-weight: 700; border: 1px solid var(--accent); padding: 5px 12px; 
+            color: var(--accent); transition: all 0.3s; cursor: default;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.9rem;
+            position: relative; overflow: hidden;
+        }
+        .logo::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(var(--accent-rgb), 0.1), transparent);
+            transition: left 0.5s;
+        }
+        .logo:hover::before { left: 100%; }
+        .logo:hover { background: var(--accent); color: #000; box-shadow: 0 0 15px var(--accent-glow), 3px 3px 0px var(--glitch-1); }
+
+        nav ul { list-style: none; display: flex; gap: 5px; align-items: center; flex-wrap: wrap; justify-content: center; }
+        nav a { 
+            font-size: 0.85rem; color: var(--text-muted); white-space: nowrap; 
+            padding: 5px 10px; position: relative; transition: all 0.3s;
+        }
+        nav a::after {
+            content: ''; position: absolute; bottom: 0; left: 50%; width: 0; height: 1px;
+            background: var(--accent); transition: all 0.3s; transform: translateX(-50%);
+        }
+        nav a:hover { color: var(--accent); text-shadow: none; }
+        nav a:hover::after { width: 80%; }
+        nav a.active { color: var(--accent); }
+        nav a.active::after { width: 80%; }
+
+        .theme-btn {
+            background: transparent; border: 1px solid var(--border); color: var(--text-muted);
+            padding: 5px 12px; font-size: 0.75rem; cursor: pointer; font-family: inherit;
+            transition: all 0.3s; white-space: nowrap; letter-spacing: 0.5px;
+        }
+        .theme-btn:hover { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 10px var(--accent-dim); }
+
+        /* ══════════════════════════════════════════════
+           HERO
+           ══════════════════════════════════════════════ */
+        .hero { 
+            padding: 100px 0 80px; border-bottom: 1px solid var(--border); 
+            text-align: center; position: relative; overflow: hidden;
+        }
+        .hero::before {
+            content: ''; position: absolute; top: 50%; left: 50%;
+            width: 600px; height: 600px; transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(var(--accent-rgb), 0.06) 0%, transparent 70%);
+            pointer-events: none; z-index: 0;
+        }
+        .hero .container { position: relative; z-index: 3; }
+        
+        .status-container { display: block; margin-bottom: 20px; }
+        .hero-status { 
+            font-size: 0.75rem; color: var(--success); letter-spacing: 2px;
+            display: inline-block; border: 1px solid var(--success); padding: 3px 12px; 
+            background: rgba(76, 175, 80, 0.08); animation: statusPulse 3s ease-in-out infinite;
+        }
+        @keyframes statusPulse {
+            0%, 100% { box-shadow: 0 0 5px rgba(76, 175, 80, 0.2); }
+            50% { box-shadow: 0 0 15px rgba(76, 175, 80, 0.4); }
+        }
+
+        .hero-subtitle { 
+            font-size: 1.05rem; color: var(--text-muted); margin-bottom: 8px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .hero-role-line {
+            font-size: 0.85rem; color: var(--accent); margin-bottom: 20px;
+            opacity: 0.8; letter-spacing: 1px;
+        }
+        
+        .social-icons { display: flex; gap: 12px; margin-top: 30px; font-size: 1.3rem; justify-content: center; flex-wrap: wrap; }
+        .social-icons a { 
+            color: var(--text-muted); border: 1px solid var(--border); width: 44px; height: 44px; 
+            display: flex; align-items: center; justify-content: center; transition: all 0.3s;
+            position: relative; overflow: hidden;
+        }
+        .social-icons a::before {
+            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 0;
+            background: var(--accent); transition: height 0.3s; z-index: 0;
+        }
+        .social-icons a:hover::before { height: 100%; }
+        .social-icons a:hover { color: #000; border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 5px 15px var(--accent-dim); }
+        .social-icons a i { position: relative; z-index: 1; }
+
+        .hero-tags { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
+        .hero-tag { 
+            font-size: 0.7rem; color: var(--accent); padding: 3px 10px; 
+            border: 1px solid rgba(var(--accent-rgb), 0.3); letter-spacing: 1.5px;
+            background: rgba(var(--accent-rgb), 0.05);
+            transition: all 0.3s;
+        }
+        .hero-tag:hover { 
+            background: rgba(var(--accent-rgb), 0.15); border-color: var(--accent);
+            box-shadow: 0 0 10px var(--accent-dim);
+        }
+        .htb-hero-tag {
+            color: var(--accent) !important; border-color: rgba(var(--accent-rgb), 0.4) !important;
+            background: rgba(var(--accent-rgb), 0.08) !important;
+            animation: htbPulse 3s ease-in-out infinite;
+        }
+        .htb-hero-tag:hover {
+            background: rgba(var(--accent-rgb), 0.2) !important;
+            border-color: var(--accent) !important;
+            box-shadow: 0 0 15px rgba(var(--accent-rgb), 0.3) !important;
+        }
+        @keyframes htbPulse {
+            0%, 100% { box-shadow: 0 0 0 rgba(var(--accent-rgb), 0); }
+            50% { box-shadow: 0 0 12px rgba(var(--accent-rgb), 0.15); }
+        }
+        .social-htb:hover { color: #111 !important; border-color: var(--accent) !important; }
+        .social-htb:hover::before { background: var(--accent) !important; }
+
+        .hero-cta { margin-top: 30px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+
+        /* ══════════════════════════════════════════════
+           STATS COUNTERS
+           ══════════════════════════════════════════════ */
+        .stats-bar {
+            display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px;
+            background: var(--border); border: 1px solid var(--border);
+            margin-top: 50px;
+        }
+        .stat-item {
+            background: var(--panel-bg); padding: 25px 15px; text-align: center;
+            transition: all 0.4s ease; position: relative; overflow: hidden;
+            opacity: 0; transform: translateY(20px);
+        }
+        .stat-item::before {
+            content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+            background: var(--accent); transform: scaleX(0); transition: transform 0.4s ease;
+        }
+        .stat-item:hover { background: var(--panel-bg-hover); }
+        .stat-item:hover::before { transform: scaleX(1); }
+        .stat-item:hover .stat-number { text-shadow: 0 0 15px var(--accent-dim); transform: scale(1.1); }
+        .stat-item.stat-visible { opacity: 1; transform: translateY(0); }
+        .stat-number {
+            font-size: 2rem; font-weight: 700; color: var(--accent);
+            font-family: 'JetBrains Mono', monospace; line-height: 1;
+            transition: transform 0.3s ease, text-shadow 0.3s ease;
+        }
+        .stat-label {
+            font-size: 0.7rem; color: var(--text-muted); margin-top: 5px;
+            text-transform: uppercase; letter-spacing: 1.5px;
+            transition: color 0.3s;
+        }
+        .stat-item:hover .stat-label { color: var(--accent); }
+
+        /* ══════════════════════════════════════════════
+           ABOUT — TERMINAL STYLE
+           ══════════════════════════════════════════════ */
+        .terminal-window {
+            background: var(--panel-bg); border: 1px solid var(--border);
+            overflow: hidden;
+        }
+        .terminal-bar {
+            background: var(--bg-secondary); padding: 8px 15px; display: flex;
+            align-items: center; gap: 8px; border-bottom: 1px solid var(--border);
+        }
+        .terminal-dot { width: 10px; height: 10px; border-radius: 50%; }
+        .terminal-dot.red { background: #ff5f57; }
+        .terminal-dot.yellow { background: #ffbd2e; }
+        .terminal-dot.green { background: #28c840; }
+        .terminal-title { font-size: 0.75rem; color: var(--text-muted); margin-left: 10px; }
+        .terminal-body { padding: 20px 25px; font-size: 0.9rem; }
+        .terminal-body .prompt { color: var(--accent); }
+        .terminal-body .cmd { color: var(--text-main); }
+        .terminal-body .output { color: var(--text-muted); margin-bottom: 12px; display: block; }
+
+        /* ══════════════════════════════════════════════
+           EDUCATION
+           ══════════════════════════════════════════════ */
+        .edu-box {
+            background: var(--panel-bg); border: 1px solid var(--border); padding: 25px;
+            display: flex; align-items: flex-start; gap: 20px; transition: all 0.3s;
+            position: relative; overflow: hidden;
+        }
+        .edu-box::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%;
+            background: var(--accent); opacity: 0; transition: opacity 0.3s;
+        }
+        .edu-box:hover { border-color: var(--accent); box-shadow: 0 0 20px var(--accent-dim); }
+        .edu-box:hover::before { opacity: 1; }
+        .edu-icon { 
+            width: 50px; height: 50px; border: 1px solid var(--border); 
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; color: var(--accent); flex-shrink: 0;
+            background: var(--bg-color);
+        }
+        .edu-title { font-weight: 700; color: var(--text-main); font-size: 1rem; }
+        .edu-school { color: var(--accent); font-size: 0.85rem; margin-top: 2px; }
+        .edu-date { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
+        .edu-thesis { font-size: 0.82rem; color: var(--text-muted); margin-top: 10px; font-style: italic; line-height: 1.6; }
+
+        /* ══════════════════════════════════════════════
+           EXPERIENCE TIMELINE
+           ══════════════════════════════════════════════ */
+        .timeline { position: relative; padding-left: 35px; }
+        .timeline::before {
+            content: ''; position: absolute; left: 10px; top: 0; bottom: 0;
+            width: 2px; background: linear-gradient(to bottom, var(--accent), var(--border));
+        }
+        .timeline-item {
+            position: relative; margin-bottom: 40px; padding: 25px;
+            background: var(--panel-bg); border: 1px solid var(--border);
+            transition: all 0.4s ease; overflow: hidden;
+        }
+        .timeline-item::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 0; height: 100%;
+            background: rgba(var(--accent-rgb), 0.03); transition: width 0.5s;
+        }
+        .timeline-item:hover::before { width: 100%; }
+        .timeline-item:hover { 
+            border-color: var(--accent); 
+            box-shadow: 0 0 25px var(--accent-dim), inset 0 0 30px rgba(var(--accent-rgb), 0.02);
+        }
+        .timeline-dot {
+            position: absolute; left: -33px; top: 28px;
+            width: 12px; height: 12px; background: var(--accent);
+            border-radius: 50%; border: 3px solid var(--bg-color);
+            box-shadow: 0 0 0 2px var(--accent);
+            animation: dotPulse 2s ease-in-out infinite;
+        }
+        @keyframes dotPulse {
+            0%, 100% { box-shadow: 0 0 0 2px var(--accent), 0 0 0 4px transparent; }
+            50% { box-shadow: 0 0 0 2px var(--accent), 0 0 0 8px rgba(var(--accent-rgb), 0.2); }
+        }
+        .timeline-item:last-child .timeline-dot { animation: none; box-shadow: 0 0 0 2px var(--border); background: var(--border); }
+
+        .timeline-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+        .timeline-company { font-weight: 700; color: var(--text-main); font-size: 1.05rem; }
+        .timeline-date { 
+            font-size: 0.75rem; color: var(--accent); white-space: nowrap;
+            border: 1px solid rgba(var(--accent-rgb), 0.3); padding: 2px 8px;
+            background: rgba(var(--accent-rgb), 0.05);
+        }
+        .timeline-role { font-size: 0.85rem; color: var(--accent); margin-bottom: 12px; font-style: italic; opacity: 0.9; }
+        .timeline-desc { 
+            font-size: 0.83rem; color: var(--text-muted); margin-bottom: 6px; 
+            padding-left: 18px; position: relative; line-height: 1.6;
+        }
+        .timeline-desc::before { 
+            content: '▹'; position: absolute; left: 0; color: var(--accent); 
+            font-size: 0.9rem; top: 0;
+        }
+
+        /* ══════════════════════════════════════════════
+           CERTIFICATIONS
+           ══════════════════════════════════════════════ */
+        .cert-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .cert-box { 
+            border: 1px solid var(--border); padding: 22px; 
+            display: flex; align-items: center; gap: 18px; background: var(--panel-bg);
+            transition: all 0.4s; position: relative; overflow: hidden;
+        }
+        .cert-box::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%;
+            background: var(--accent); transform: scaleY(0); transition: transform 0.3s;
+            transform-origin: bottom;
+        }
+        .cert-box:hover { border-color: var(--accent); box-shadow: 0 0 20px var(--accent-dim); transform: translateY(-2px); }
+        .cert-box:hover::before { transform: scaleY(1); }
+        .cert-icon {
+            width: 48px; height: 48px; border: 1px solid var(--accent);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.3rem; color: var(--accent); flex-shrink: 0;
+            background: rgba(var(--accent-rgb), 0.05);
+        }
+        .cert-title { font-weight: 700; color: var(--text-main); font-size: 0.95rem; }
+        .cert-status { font-size: 0.75rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+        .cert-issuer { font-size: 0.75rem; color: var(--text-muted); }
+
+        /* ══════════════════════════════════════════════
+           HACK THE BOX
+           ══════════════════════════════════════════════ */
+        .htb-section { position: relative; }
+        .htb-layout { display: flex; flex-direction: column; gap: 20px; }
+        .htb-card {
+            background: var(--panel-bg); border: 1px solid var(--border); padding: 25px;
+            transition: all 0.4s; position: relative; overflow: hidden;
+        }
+        .htb-card:hover { border-color: var(--accent); box-shadow: 0 0 25px var(--accent-dim); }
+        .htb-card-header {
+            display: flex; align-items: center; gap: 12px; margin-bottom: 18px;
+            padding-bottom: 15px; border-bottom: 1px solid var(--border);
+        }
+        .htb-logo {
+            width: 42px; height: 42px; display: flex; align-items: center; justify-content: center;
+            border: 1px solid var(--accent); background: rgba(var(--accent-rgb), 0.05); flex-shrink: 0;
+        }
+        .htb-logo svg { width: 24px; height: 24px; fill: var(--accent); }
+        .htb-card-title { font-weight: 700; color: var(--accent); font-size: 1rem; letter-spacing: 0.5px; }
+        .htb-card-subtitle { font-size: 0.75rem; color: var(--text-muted); }
+
+        /* Profile Banner */
+        .htb-profile-banner {
+            display: grid; grid-template-columns: auto 1fr auto; gap: 25px; align-items: center;
+        }
+        .htb-badge-container { flex-shrink: 0; }
+        .htb-badge-container a { display: block; }
+        .htb-badge-container img {
+            height: 60px; width: auto; border: 1px solid var(--border);
+            transition: all 0.3s; display: block;
+        }
+        .htb-badge-container img:hover { border-color: var(--accent); box-shadow: 0 0 15px rgba(var(--accent-rgb), 0.1); }
+        .htb-profile-info { font-size: 0.8rem; color: var(--text-muted); line-height: 1.6; }
+        .htb-profile-info strong { color: var(--accent); font-weight: 700; }
+        .htb-profile-actions { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
+
+        /* Stats Row */
+        .htb-stat-row {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+        }
+        .htb-stat {
+            background: var(--bg-color); border: 1px solid var(--border); padding: 14px 12px;
+            text-align: center; transition: all 0.3s;
+        }
+        .htb-stat:hover { border-color: var(--accent); }
+        .htb-stat-value { font-size: 1.1rem; font-weight: 700; color: var(--accent); font-family: 'JetBrains Mono', monospace; }
+        .htb-stat-label { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 3px; }
+
+        /* Machines & Challenges */
+        .htb-machine-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+        }
+        .htb-machine {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 10px 14px; background: var(--bg-color); border: 1px solid var(--border);
+            font-size: 0.8rem; transition: all 0.3s;
+        }
+        .htb-machine:hover { border-color: var(--accent); }
+        .htb-machine-name { color: var(--text-main); font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .htb-os-icon {
+            width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+            border: 1px solid var(--border); background: rgba(var(--accent-rgb), 0.05);
+            color: var(--accent); font-size: 0.85rem; flex-shrink: 0; transition: all 0.3s;
+        }
+        .htb-machine:hover .htb-os-icon { border-color: var(--accent); background: rgba(var(--accent-rgb), 0.12); box-shadow: 0 0 8px rgba(var(--accent-rgb), 0.15); }
+        .htb-machine-diff {
+            font-size: 0.7rem; padding: 2px 8px; border: 1px solid; letter-spacing: 0.5px;
+        }
+        .htb-machine-meta { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+        .htb-machine-date { font-size: 0.65rem; color: var(--text-muted); white-space: nowrap; }
+        .htb-diff-easy { color: #9fef00; border-color: rgba(159, 239, 0, 0.3); }
+        .htb-diff-medium { color: #ffaf00; border-color: rgba(255, 175, 0, 0.3); }
+        .htb-diff-hard { color: #fe0000; border-color: rgba(254, 0, 0, 0.3); }
+        .htb-diff-insane { color: #ff003c; border-color: rgba(255, 0, 60, 0.3); }
+        .htb-challenge-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 6px;
+        }
+        .htb-cta { margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+        .btn-htb {
+            border-color: var(--accent); color: var(--accent);
+        }
+        .btn-htb::before { background: var(--accent); }
+        .btn-htb:hover { color: #111; }
+        @media (max-width: 768px) {
+            .htb-stat-row { grid-template-columns: repeat(2, 1fr); }
+            .htb-profile-banner { grid-template-columns: 1fr; text-align: center; }
+            .htb-profile-actions { align-items: center; }
+            .htb-badge-container { display: flex; justify-content: center; }
+            .htb-machine-grid { grid-template-columns: 1fr; }
+        }
+
+        /* ══════════════════════════════════════════════
+           PROJECTS
+           ══════════════════════════════════════════════ */
+        .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
+        .project-card {
+            background: var(--panel-bg); border: 1px solid var(--border); display: flex; flex-direction: column;
+            transition: all 0.4s ease; position: relative; overflow: hidden;
+        }
+        .project-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            opacity: 0; transition: opacity 0.4s;
+        }
+        .project-card:hover { border-color: var(--accent); transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+        .project-card:hover::before { opacity: 1; }
+        .card-header { 
+            background: var(--bg-secondary); padding: 6px 12px; font-size: 0.7rem; 
+            color: var(--text-muted); display: flex; justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+        }
+        .card-body { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
+        .card-title { font-size: 1.05rem; color: #fff; margin-bottom: 8px; font-weight: 600; }
+        .card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; padding-top: 15px; }
+        .tag { 
+            font-size: 0.7rem; background: rgba(var(--accent-rgb), 0.08); color: var(--accent); 
+            padding: 3px 8px; border: 1px solid rgba(var(--accent-rgb), 0.2);
+            transition: all 0.3s;
+        }
+        .tag:hover { background: rgba(var(--accent-rgb), 0.2); border-color: var(--accent); }
+        .card-actions { padding: 15px 20px; border-top: 1px solid var(--border); display: flex; gap: 10px; }
+
+        /* ══════════════════════════════════════════════
+           SKILL TAGS
+           ══════════════════════════════════════════════ */
+        .skill-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 15px; }
+        .skill-tag { 
+            font-size: 0.75rem; padding: 3px 10px; border: 1px solid var(--border); 
+            color: var(--text-muted); background: var(--bg-color); transition: all 0.3s;
+        }
+        .skill-tag:hover { border-color: var(--accent); color: var(--accent); background: rgba(var(--accent-rgb), 0.05); }
+
+        /* ══════════════════════════════════════════════
+           BUTTONS & FORM
+           ══════════════════════════════════════════════ */
+        .btn { 
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 10px 20px; font-size: 0.82rem; font-weight: 600; cursor: pointer;
+            border: 1px solid var(--accent); color: var(--accent); background: transparent; 
+            transition: all 0.3s; font-family: inherit; text-decoration: none;
+            position: relative; overflow: hidden; letter-spacing: 0.5px;
+        }
+        .btn::before {
+            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 0;
+            background: var(--accent); transition: height 0.3s; z-index: 0;
+        }
+        .btn:hover::before { height: 100%; }
+        .btn:hover { color: #000; box-shadow: 0 0 20px var(--accent-dim); text-shadow: none; }
+        .btn span, .btn i { position: relative; z-index: 1; }
+        .btn-sm { padding: 6px 12px; font-size: 0.78rem; }
+        .btn-outline { border-color: var(--text-muted); color: var(--text-muted); }
+        .btn-outline::before { background: var(--text-muted); }
+        .btn-outline:hover { color: #000; box-shadow: none; }
+        .btn-ghost { border: none; color: var(--text-muted); padding: 6px 10px; }
+        .btn-ghost::before { display: none; }
+        .btn-ghost:hover { color: var(--accent); background: rgba(var(--accent-rgb), 0.1); }
+
+        /* ══════════════════════════════════════════════
+           CONTACT INFO BAR
+           ══════════════════════════════════════════════ */
+        .contact-info {
+            display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;
+            margin-bottom: 30px; padding: 20px;
+            background: var(--panel-bg); border: 1px solid var(--border);
+        }
+        .contact-info-item {
+            display: flex; align-items: center; gap: 8px; font-size: 0.85rem;
+            color: var(--text-muted); transition: color 0.3s;
+        }
+        .contact-info-item i { color: var(--accent); font-size: 0.9rem; }
+        .contact-info-item:hover { color: var(--text-main); }
+
+        /* ══════════════════════════════════════════════
+           STATUS BAR
+           ══════════════════════════════════════════════ */
+        .status-bar {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: var(--accent); color: #000;
+            padding: 4px 20px; font-size: 0.72rem; font-weight: 600;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 2000; border-top: 2px solid #000;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .status-bar .sb-group {
+            display: flex; gap: 14px; align-items: center;
+        }
+        .status-bar .sb-sep {
+            opacity: 0.3; user-select: none;
+        }
+        .status-bar .sb-section {
+            max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+        .status-bar .sb-blink {
+            animation: sbBlink 1s steps(1) infinite;
+        }
+        @keyframes sbBlink {
+            0%, 100% { opacity: 1; } 50% { opacity: 0; }
+        }
+
+        /* ══════════════════════════════════════════════
+           MODAL
+           ══════════════════════════════════════════════ */
+        .modal {
+            display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.92); backdrop-filter: blur(8px);
+        }
+        .modal-window {
+            background-color: var(--bg-color); margin: 4% auto; padding: 0; border: 1px solid var(--accent);
+            width: 90%; max-width: 720px; position: relative; 
+            box-shadow: 0 0 40px var(--accent-dim), 0 0 80px rgba(0,0,0,0.5);
+            animation: modalIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
+            max-height: 90vh; display: flex; flex-direction: column;
+        }
+        @keyframes modalIn { 
+            from { transform: translateY(-30px) scale(0.95); opacity: 0; } 
+            to { transform: translateY(0) scale(1); opacity: 1; } 
+        }
+        .modal-bar { 
+            background: var(--accent); color: #000; padding: 8px 15px; 
+            font-weight: 700; display: flex; justify-content: space-between;
+            font-size: 0.85rem;
+        }
+        .close-modal { cursor: pointer; font-weight: 700; padding: 0 5px; transition: all 0.2s; }
+        .close-modal:hover { background: #000; color: var(--accent); }
+        .modal-content-inner { padding: 30px; overflow-y: auto; flex-grow: 1; }
+        .modal-content-inner p { margin-bottom: 15px; color: #bbb; line-height: 1.7; }
+        .modal-content-inner h4 { 
+            color: var(--accent); margin-top: 20px; margin-bottom: 10px; 
+            border-bottom: 1px solid var(--border); display: inline-block;
+            padding-bottom: 3px;
+        }
+        .modal-content-inner ul { margin-left: 20px; margin-bottom: 15px; color: #bbb; }
+        .modal-content-inner li { margin-bottom: 5px; }
+
+        /* ══════════════════════════════════════════════
+           FOOTER
+           ══════════════════════════════════════════════ */
+        footer { 
+            margin-top: 100px; padding: 40px 0; border-top: 1px solid var(--border); 
+            text-align: center; font-size: 0.8rem;
+        }
+        footer p { color: var(--text-muted); }
+        .footer-links { display: flex; gap: 20px; justify-content: center; margin-top: 10px; }
+        .footer-links a { color: var(--text-muted); font-size: 1.1rem; transition: all 0.3s; }
+        .footer-links a:hover { color: var(--accent); transform: translateY(-2px); }
+
+        /* ══════════════════════════════════════════════
+           BACK TO TOP
+           ══════════════════════════════════════════════ */
+        .back-to-top {
+            position: fixed; bottom: 50px; right: 25px; z-index: 1500;
+            width: 40px; height: 40px; border: 1px solid var(--border);
+            background: var(--panel-bg); color: var(--text-muted);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.3s;
+            opacity: 0; pointer-events: none; transform: translateY(10px);
+            font-size: 0.9rem;
+        }
+        .back-to-top.visible { opacity: 1; pointer-events: all; transform: translateY(0); }
+        .back-to-top:hover { 
+            border-color: var(--accent); color: var(--accent); 
+            background: rgba(var(--accent-rgb), 0.1);
+            box-shadow: 0 0 15px var(--accent-dim);
+        }
+
+        /* ══════════════════════════════════════════════
+           RESPONSIVE
+           ══════════════════════════════════════════════ */
+        @media (max-width: 900px) {
+            .stats-bar { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .nav-flex { flex-direction: column; align-items: center; gap: 12px; }
+            nav ul { gap: 2px; }
+            h1 { font-size: 1.8rem; }
+            .status-bar { display: none; }
+            body { padding-bottom: 0; }
+            .hero { padding: 70px 0 60px; }
+            .modal-window { width: 95%; margin: 8% auto; max-height: 88vh; }
+            .timeline-header { flex-direction: column; }
+            .edu-box { flex-direction: column; align-items: center; text-align: center; }
+            .stats-bar { grid-template-columns: repeat(2, 1fr); }
+            .stat-number { font-size: 1.5rem; }
+            .contact-info { flex-direction: column; align-items: center; }
+            .back-to-top { bottom: 15px; right: 15px; }
+            #boot-screen { display: none !important; }
+            .glitch-active::before, .glitch-active::after { display: none; }
+        }
+        @media (max-width: 480px) {
+            .stats-bar { grid-template-columns: repeat(2, 1fr); }
+            .hero-cta { flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body data-theme="amber">
+
+    <!-- ═══ BOOT SEQUENCE ═══ -->
+    <div id="boot-screen">
+        <div id="boot-text"></div>
+        <div class="boot-progress"><div class="boot-progress-bar" id="boot-bar"></div></div>
+    </div>
+
+    <!-- ═══ MATRIX CANVAS ═══ -->
+    <canvas id="matrix-canvas"></canvas>
+
+    <!-- ═══ BACK TO TOP ═══ -->
+    <div class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+        <i class="fas fa-chevron-up"></i>
+    </div>
+
+    <!-- ═══ HEADER ═══ -->
+    <header id="main-header">
+        <div class="container nav-flex">
+            <div class="logo" data-status="Home">./DDM</div>
+            <nav>
+                <ul>
+                    <li><a href="#about" data-status="Profile" data-section="about">~/about</a></li>
+                    <li><a href="#experience" data-status="Experience" data-section="experience">~/exp</a></li>
+                    <li><a href="#certs" data-status="Certifications" data-section="certs">~/certs</a></li>
+                    <li><a href="#htb" data-status="Hack The Box" data-section="htb">~/htb</a></li>
+                    <li><a href="#projects" data-status="Projects" data-section="projects">~/projects</a></li>
+                    <li><a href="#contact" data-status="Contact" data-section="contact">~/contact</a></li>
+                    <li><button class="theme-btn" onclick="toggleTheme()" data-status="Switch Theme">[THEME]</button></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ═══ HERO ═══ -->
+    <section class="hero" id="hero">
+        <div class="container">
+            <div class="status-container">
+                <span class="hero-status">● SYSTEM STATUS: ONLINE</span>
+            </div>
+            
+            <h1 id="hero-name">
+                <span id="typewriter"></span><span class="typing-cursor"></span>
+            </h1>
+            
+            <div style="max-width: 750px; margin: 0 auto;">
+                <p class="hero-subtitle">Cyber Security Analyst & Red Team Operator</p>
+                <p class="hero-role-line">Leonardo S.p.A. — Cyber & Security Solutions Division</p>
+            </div>
+
+            <div class="hero-tags">
+                <span class="hero-tag">CEH CERTIFIED</span>
+                <span class="hero-tag">SECURITY+</span>
+                <span class="hero-tag">OWASP TOP 10</span>
+                <span class="hero-tag">ISO/IEC 15408</span>
+                <span class="hero-tag">PTES</span>
+                <a href="#htb" class="hero-tag htb-hero-tag" style="text-decoration:none; cursor:pointer;">
+                    <svg viewBox="0 0 711.09 823.41" xmlns="http://www.w3.org/2000/svg" style="width:10px;height:10px;fill:currentColor;vertical-align:middle;margin-right:4px;">
+                        <path d="M355.54 0L0 205.42v410.85l355.54 207.14 355.55-205.42V205.42zm295.48 579.3L355.54 757.47 60.07 579.3V243.39l295.47-175.46 295.48 175.46z"/>
+                    </svg>HTB: HACKER
+                </a>
+            </div>
+
+            <div class="hero-cta">
+                <a href="#contact" class="btn"><span>GET IN TOUCH</span> <i class="fas fa-terminal"></i></a>
+                <a href="CV_Davide_Di_Matteo.pdf" download="CV_Davide_Di_Matteo.pdf" class="btn btn-outline"><span>DOWNLOAD CV</span> <i class="fas fa-file-download"></i></a>
+            </div>
+            
+            <div class="social-icons">
+                <a href="https://linkedin.com/in/davide-di-matteo" target="_blank" data-status="LinkedIn" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                <a href="https://app.hackthebox.com/profile/110118" target="_blank" data-status="Hack The Box" aria-label="Hack The Box" class="social-htb">
+                    <svg viewBox="0 0 711.09 823.41" xmlns="http://www.w3.org/2000/svg" style="width:18px;height:18px;position:relative;z-index:1;">
+                        <path d="M355.54 0L0 205.42v410.85l355.54 207.14 355.55-205.42V205.42zm295.48 579.3L355.54 757.47 60.07 579.3V243.39l295.47-175.46 295.48 175.46z" fill="currentColor"/>
+                    </svg>
+                </a>
+                <a href="mailto:davidedimatteo97@gmail.com" data-status="Email" aria-label="Email"><i class="fas fa-envelope"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ STATS BAR ═══ -->
+    <div class="container">
+        <div class="stats-bar reveal">
+            <div class="stat-item">
+                <div class="stat-number" data-count="3">0</div>
+                <div class="stat-label">Years Experience</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" data-count="2">0</div>
+                <div class="stat-label">Certifications</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" data-count="21">0</div>
+                <div class="stat-label">Machines Pwned</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" data-count="3">0</div>
+                <div class="stat-label">Technical Projects</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" data-count="7">0</div>
+                <div class="stat-label">Tools Mastered</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        
+        <!-- ═══ ABOUT ═══ -->
+        <section id="about">
+            <h2 class="reveal">01_WHOAMI.txt</h2>
+            <div class="terminal-window reveal">
+                <div class="terminal-bar">
+                    <div style="display:flex; gap:6px;">
+                        <div class="terminal-dot red"></div>
+                        <div class="terminal-dot yellow"></div>
+                        <div class="terminal-dot green"></div>
+                    </div>
+                    <span class="terminal-title">davide@kali:~</span>
+                </div>
+                <div class="terminal-body">
+                    <span class="prompt">davide@kali:~$</span> <span class="cmd">cat about.txt</span>
+                    <span class="output" style="margin-top: 12px;">
+                        Cyber Security Analyst with <strong>3+ years of experience</strong> in Vulnerability Assessment, 
+                        Penetration Testing and security evaluation according to 
+                        <strong>Common Criteria (ISO/IEC 15408)</strong> standards.
+                    </span>
+                    <span class="output">
+                        Computer Science graduate from "Tor Vergata" University of Rome, with an experimental thesis 
+                        on <strong>Linux Anti-Malware</strong> capabilities analysis, developing evasion techniques 
+                        (Process Injection, Memory Shellcode) in C and Python.
+                    </span>
+                    <span class="output">
+                        Currently working in the <strong>Red Team & Cyber Security Assurance</strong> division at Leonardo S.p.A., 
+                        where I conduct offensive operations on INFOSEC systems and support security certifications 
+                        for critical products in the <strong>Defense & Aerospace</strong> sector.
+                    </span>
+                    <span class="prompt">davide@kali:~$</span> <span class="typing-cursor"></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══ EDUCATION ═══ -->
+        <section id="education">
+            <h2 class="reveal">02_EDUCATION.log</h2>
+            <div class="edu-box reveal">
+                <div class="edu-icon"><i class="fas fa-graduation-cap"></i></div>
+                <div>
+                    <div class="edu-title">Bachelor's Degree in Computer Science</div>
+                    <div class="edu-school">University of Rome "Tor Vergata"</div>
+                    <div class="edu-date"><i class="fas fa-calendar-alt" style="margin-right:5px;"></i>Sep 2016 — 2022 | Rome, Italy</div>
+                    <div class="edu-thesis">
+                        <strong style="color:var(--accent);">Thesis:</strong> "Security Analysis and Capabilities of Anti-Malware Software on Linux" — 
+                        Development of malware evasion techniques (Process Injection, Self-Injection, Direct Memory Shellcode Writing) in C and Python.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══ EXPERIENCE ═══ -->
+        <section id="experience">
+            <h2 class="reveal">03_EXPERIENCE.sh</h2>
+            <div class="timeline">
+                
+                <div class="timeline-item reveal">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-header">
+                        <div>
+                            <div class="timeline-company"><i class="fas fa-building" style="margin-right:8px; color:var(--accent); font-size:0.9rem;"></i>Leonardo S.p.A.</div>
+                            <div class="timeline-role">Cyber Security Assurance & Red Team</div>
+                        </div>
+                        <div class="timeline-date">Nov 2024 — Present</div>
+                    </div>
+                    <p class="timeline-desc">Vulnerability Assessment and Penetration Testing on INFOSEC systems and critical applications, leveraging Nessus, Burp Suite and Nmap.</p>
+                    <p class="timeline-desc">Supporting Common Criteria (ISO/IEC 15408) certifications, managing technical documentation and remediation plans for regulatory compliance.</p>
+                    <p class="timeline-desc">Collaboration with the Security Evaluation Lab (LVS) for product resistance analysis and test procedure development for the LAP.</p>
+                    <div class="skill-tags">
+                        <span class="skill-tag">Nessus</span>
+                        <span class="skill-tag">Burp Suite</span>
+                        <span class="skill-tag">Nmap</span>
+                        <span class="skill-tag">Common Criteria</span>
+                        <span class="skill-tag">Red Team</span>
+                    </div>
+                </div>
+
+                <div class="timeline-item reveal">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-header">
+                        <div>
+                            <div class="timeline-company"><i class="fas fa-building" style="margin-right:8px; color:var(--accent); font-size:0.9rem;"></i>Sipal S.p.A.</div>
+                            <div class="timeline-role">Cybersecurity Analyst | Ce.Va. Operator</div>
+                        </div>
+                        <div class="timeline-date">Dec 2022 — Nov 2024</div>
+                    </div>
+                    <p class="timeline-desc">Security requirements analysis and penetration testing on client products for Common Criteria compliance.</p>
+                    <p class="timeline-desc">Leveraging SAST/DAST tools and vulnerability scanners to identify and mitigate flaws in code and infrastructure.</p>
+                    <p class="timeline-desc">Collaboration with development teams for vulnerability mitigation and technical evaluation documentation.</p>
+                    <div class="skill-tags">
+                        <span class="skill-tag">SAST/DAST</span>
+                        <span class="skill-tag">Pentest</span>
+                        <span class="skill-tag">Common Criteria</span>
+                        <span class="skill-tag">Vulnerability Scanner</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══ CERTIFICATIONS ═══ -->
+        <section id="certs">
+            <h2 class="reveal">04_CERTIFICATIONS.log</h2>
+            <div class="cert-container">
+                <div class="cert-box reveal reveal-delay-1">
+                    <div class="cert-icon"><i class="fas fa-certificate"></i></div>
+                    <div>
+                        <div class="cert-title">Certified Ethical Hacker (CEH)</div>
+                        <div class="cert-issuer">EC-Council</div>
+                        <div class="cert-status"><i class="fas fa-check-circle" style="margin-right:4px;"></i>Earned — Nov 2025</div>
+                    </div>
+                </div>
+                <div class="cert-box reveal reveal-delay-2">
+                    <div class="cert-icon"><i class="fas fa-shield-halved"></i></div>
+                    <div>
+                        <div class="cert-title">CompTIA Security+</div>
+                        <div class="cert-issuer">CompTIA</div>
+                        <div class="cert-status"><i class="fas fa-check-circle" style="margin-right:4px;"></i>Earned — Oct 2017</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══ HACK THE BOX ═══ -->
+        <section id="htb" class="htb-section">
+            <h2 class="reveal">05_HACKTHEBOX.pwn</h2>
+
+            <div class="htb-layout">
+
+                <!-- Profile Banner -->
+                <div class="htb-card reveal">
+                    <div class="htb-profile-banner">
+                        <div class="htb-badge-container">
+                            <a href="https://app.hackthebox.com/profile/110118" target="_blank" rel="noopener">
+                                <img src="https://www.hackthebox.eu/badge/image/110118" alt="Hack The Box Profile Badge" loading="lazy">
+                            </a>
+                        </div>
+                        <div class="htb-profile-info">
+                            <strong id="htb-username">@Dingooo</strong> &mdash;
+                            Active HTB player focused on realistic penetration testing scenarios.
+                            Practicing offensive security across Linux &amp; Windows targets to sharpen real-world Red Team skills.
+                        </div>
+                        <div class="htb-profile-actions">
+                            <a href="https://app.hackthebox.com/profile/110118" target="_blank" class="btn btn-sm btn-htb" rel="noopener">
+                                <span>VIEW PROFILE</span> <i class="fas fa-external-link-alt"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats Row -->
+                <div class="htb-stat-row reveal reveal-delay-1">
+                    <div class="htb-stat">
+                        <div class="htb-stat-value" id="htb-rank">--</div>
+                        <div class="htb-stat-label">Rank</div>
+                    </div>
+                    <div class="htb-stat">
+                        <div class="htb-stat-value" id="htb-user-owns">--</div>
+                        <div class="htb-stat-label">User Owns</div>
+                    </div>
+                    <div class="htb-stat">
+                        <div class="htb-stat-value" id="htb-system-owns">--</div>
+                        <div class="htb-stat-label">System Owns</div>
+                    </div>
+                    <div class="htb-stat">
+                        <div class="htb-stat-value" id="htb-global-rank">--</div>
+                        <div class="htb-stat-label">Global Rank</div>
+                    </div>
+                </div>
+
+                <!-- Pwned Machines -->
+                <div class="htb-card reveal reveal-delay-2">
+                    <div class="htb-card-header">
+                        <div class="htb-logo">
+                            <i class="fas fa-server" style="color:var(--accent); font-size:1.1rem;"></i>
+                        </div>
+                        <div>
+                            <div class="htb-card-title">PWNED MACHINES</div>
+                            <div class="htb-card-subtitle">Recently rooted boxes</div>
+                        </div>
+                    </div>
+                    <div class="htb-machine-grid" id="htb-machines">
+                        <div class="htb-machine" style="grid-column:1/-1; justify-content:center; color:var(--text-muted);"><i class="fas fa-spinner fa-spin" style="margin-right:8px;"></i>Loading...</div>
+                    </div>
+                    <div class="htb-cta">
+                        <a href="https://app.hackthebox.com/profile/110118" target="_blank" class="btn btn-sm btn-htb" rel="noopener">
+                            <span>FULL ACTIVITY</span> <i class="fas fa-arrow-right"></i>
+                        </a>
+                        <span id="htb-last-update" style="font-size:0.65rem; color:var(--text-muted);"></span>
+                    </div>
+                </div>
+
+                <!-- Solved Challenges -->
+                <div class="htb-card reveal reveal-delay-3">
+                    <div class="htb-card-header">
+                        <div class="htb-logo">
+                            <i class="fas fa-puzzle-piece" style="color:var(--accent); font-size:1.1rem;"></i>
+                        </div>
+                        <div>
+                            <div class="htb-card-title">SOLVED CHALLENGES</div>
+                            <div class="htb-card-subtitle">CTF-style challenges completed</div>
+                        </div>
+                    </div>
+                    <div class="htb-challenge-grid" id="htb-challenges">
+                        <div class="htb-machine" style="grid-column:1/-1; justify-content:center; color:var(--text-muted);"><i class="fas fa-spinner fa-spin" style="margin-right:8px;"></i>Loading...</div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ═══ PROJECTS ═══ -->
+        <section id="projects">
+            <h2 class="reveal">06_PROJECTS.sh</h2>
+            <div class="projects-grid" id="projects-container"></div>
+        </section>
+
+        <!-- ═══ CONTACT ═══ -->
+        <section id="contact">
+            <h2 class="reveal">07_CONTACT.msg</h2>
+            
+            <div class="contact-info reveal">
+                <div class="contact-info-item"><i class="fas fa-map-marker-alt"></i> Rome, Italy</div>
+                <div class="contact-info-item"><i class="fas fa-phone"></i> (+39) 346 134 5120</div>
+                <div class="contact-info-item"><i class="fas fa-envelope"></i> <a href="mailto:davidedimatteo97@gmail.com">davidedimatteo97@gmail.com</a></div>
+                <div class="contact-info-item"><i class="fas fa-language"></i> IT (Native) | EN (B2)</div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- ═══ FOOTER ═══ -->
+    <footer>
+        <div class="container">
+            <p>&copy; <span id="year"></span> Davide Di Matteo</p>
+            <p style="font-size:0.7rem; margin-top:5px; opacity:0.5;">Built with security in mind. No frameworks. No dependencies.</p>
+            <div class="footer-links">
+                <a href="https://linkedin.com/in/davide-di-matteo" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                <a href="mailto:davidedimatteo97@gmail.com" aria-label="Email"><i class="fas fa-envelope"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ═══ STATUS BAR ═══ -->
+    <div class="status-bar">
+        <div class="sb-group">
+            <span><span class="sb-blink">●</span> ONLINE</span>
+            <span class="sb-sep">│</span>
+            <span id="sb-section" class="sb-section">~/home</span>
+            <span class="sb-sep">│</span>
+            <span id="dynamic-status" style="opacity:0.6;">IDLE</span>
+        </div>
+        <div class="sb-group">
+            <span><i class="fas fa-shield-halved" style="font-size:0.65rem;"></i> AES-256</span>
+            <span class="sb-sep">│</span>
+            <span id="sb-ping">PING: --ms</span>
+            <span class="sb-sep">│</span>
+            <span id="sb-uptime">UP: 00:00</span>
+            <span class="sb-sep">│</span>
+            <span id="sb-clock">--:--:--</span>
+            <span class="sb-sep">│</span>
+            <span id="scroll-progress">0%</span>
+        </div>
+    </div>
+
+    <!-- ═══ MODAL ═══ -->
+    <div id="project-modal" class="modal">
+        <div class="modal-window">
+            <div class="modal-bar">
+                <span id="modal-title">INFO.txt</span>
+                <span class="close-modal" onclick="closeMyModal()">[X] CLOSE</span>
+            </div>
+            <div class="modal-content-inner">
+                <div id="modal-body"></div>
+                <div id="modal-tags" style="margin: 20px 0; display:flex; gap:8px; flex-wrap:wrap;"></div>
+                <a href="#" id="modal-link" class="btn" target="_blank"><span>VIEW SOURCE</span> <i class="fab fa-github"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    (function() {
+        'use strict';
+
+        // ═══════════════════════════════════════
+        // 1. BOOT SEQUENCE
+        // ═══════════════════════════════════════
+        const bootLines = [
+            { text: '[BIOS] Initializing secure boot...', delay: 100 },
+            { text: '[OK] Kernel loaded', delay: 200, cls: 'boot-ok' },
+            { text: '[OK] Network interfaces UP', delay: 150, cls: 'boot-ok' },
+            { text: '[..] Loading cybersec modules...', delay: 300 },
+            { text: '  ├── nmap-engine      [LOADED]', delay: 100 },
+            { text: '  ├── burpsuite-proxy  [LOADED]', delay: 100 },
+            { text: '  ├── metasploit-rpc   [LOADED]', delay: 100 },
+            { text: '  └── nessus-scanner   [LOADED]', delay: 100 },
+            { text: '[OK] All modules operational', delay: 200, cls: 'boot-ok' },
+            { text: '', delay: 100 },
+            { text: '> Davide Di Matteo — Portfolio v2.0', delay: 200, cls: 'boot-accent' },
+            { text: '> System ready.', delay: 300, cls: 'boot-accent' },
+        ];
+
+        const bootScreen = document.getElementById('boot-screen');
+        const bootText = document.getElementById('boot-text');
+        const bootBar = document.getElementById('boot-bar');
+
+        // Skip boot on mobile or if already seen
+        const isMobile = window.innerWidth < 769;
+        const bootSeen = sessionStorage.getItem('bootSeen');
+
+        if (isMobile || bootSeen) {
+            if (bootScreen) bootScreen.style.display = 'none';
+            document.body.style.overflow = '';
+            setTimeout(initApp, 0);
+        } else {
+            document.body.style.overflow = 'hidden';
+            runBoot();
+        }
+
+        function runBoot() {
+            let i = 0;
+            const total = bootLines.length;
+            function nextLine() {
+                if (i >= total) {
+                    bootBar.style.width = '100%';
+                    setTimeout(() => {
+                        bootScreen.classList.add('fade-out');
+                        document.body.style.overflow = '';
+                        sessionStorage.setItem('bootSeen', '1');
+                        setTimeout(() => { bootScreen.style.display = 'none'; }, 800);
+                        initApp();
+                    }, 600);
+                    return;
+                }
+                const line = bootLines[i];
+                const span = document.createElement('div');
+                if (line.cls) span.className = line.cls;
+                span.textContent = line.text;
+                bootText.appendChild(span);
+                bootBar.style.width = ((i + 1) / total * 100) + '%';
+                i++;
+                setTimeout(nextLine, line.delay);
+            }
+            setTimeout(nextLine, 400);
+        }
+
+        // ═══════════════════════════════════════
+        // 2. MATRIX RAIN BACKGROUND
+        // ═══════════════════════════════════════
+        function initMatrix() {
+            const canvas = document.getElementById('matrix-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%^&*(){}[]|;:<>?/~';
+            const fontSize = 14;
+            const columns = Math.floor(canvas.width / fontSize);
+            const drops = Array(columns).fill(1);
+
+            function draw() {
+                ctx.fillStyle = 'rgba(10, 10, 10, 0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                const style = getComputedStyle(document.body);
+                ctx.fillStyle = style.getPropertyValue('--accent').trim() || '#ffb000';
+                ctx.font = fontSize + 'px monospace';
+
+                for (let i = 0; i < drops.length; i++) {
+                    const text = chars[Math.floor(Math.random() * chars.length)];
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
+            }
+            setInterval(draw, 50);
+
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        }
+
+        // ═══════════════════════════════════════
+        // 3. PROJECTS DATA
+        // ═══════════════════════════════════════
+        const myProjects = [
+            {
+                id: "malware_evasion",
+                title: "Linux Malware Evasion Research",
+                description: "Experimental research on malware evasion techniques in Linux environments. Bachelor's thesis.",
+                fullDescription: `
+                    <h4>Context</h4>
+                    <p>Experimental thesis for the Bachelor's Degree in Computer Science at the University of Rome "Tor Vergata".</p>
+                    <h4>Objective</h4>
+                    <p>Analyze the effectiveness of major <strong>Anti-Malware software on Linux</strong> and develop advanced evasion techniques to bypass signature-based detection.</p>
+                    <h4>Technical Implementation</h4>
+                    <ul>
+                        <li>Design and development of <strong>custom malware in C and Python</strong> to test AV effectiveness.</li>
+                        <li>Implementation of <strong>Process Injection</strong>: shellcode injection into legitimate running processes.</li>
+                        <li><strong>Self-Injection</strong>: code self-modification techniques to avoid pattern detection.</li>
+                        <li><strong>Direct Memory Shellcode Writing</strong>: direct memory writing to bypass file-based controls.</li>
+                        <li>Comparative analysis of detection results across different AV engines.</li>
+                    </ul>`,
+                tags: ["C", "Python", "Malware Analysis", "Process Injection", "Linux", "Evasion"],
+                githubLink: null,
+                statusMsg: "Malware Research",
+                icon: "fa-bug"
+            },
+            {
+                id: "ecommerce",
+                title: "Secure E-commerce Platform",
+                description: "Full-stack e-commerce with defensive security measures built-in from design.",
+                fullDescription: `
+                    <h4>Context</h4>
+                    <p>Academic project focused on secure web application development.</p>
+                    <h4>Implementation</h4>
+                    <ul>
+                        <li>Full-stack <strong>web portal</strong> development with PHP and MySQL.</li>
+                        <li>Implementation of <strong>strict input validation</strong> to prevent SQL Injection and XSS.</li>
+                        <li>Order management system with <strong>prepared statements</strong> and output sanitization.</li>
+                        <li>Secure authentication with password hashing and session management.</li>
+                    </ul>`,
+                tags: ["PHP", "MySQL", "HTML/CSS", "SQLi Prevention", "XSS Mitigation"],
+                githubLink: null,
+                statusMsg: "Secure E-commerce",
+                icon: "fa-cart-shopping"
+            },
+            {
+                id: "db_soundcloud",
+                title: "Database System (SoundCloud Clone)",
+                description: "ER schema design and optimized relational/NoSQL database implementation.",
+                fullDescription: `
+                    <h4>Context</h4>
+                    <p>Academic Database Management Systems project.</p>
+                    <h4>Implementation</h4>
+                    <ul>
+                        <li>Complete <strong>Entity-Relationship schema</strong> design for a music streaming system.</li>
+                        <li>Implementation with <strong>MySQL</strong> for relational data (users, playlists, metadata).</li>
+                        <li>Implementation with <strong>MongoDB</strong> for unstructured data (logs, analytics).</li>
+                        <li>Query and index optimization for high performance on large data volumes.</li>
+                    </ul>`,
+                tags: ["MySQL", "MongoDB", "ER Design", "NoSQL", "Query Optimization"],
+                githubLink: null,
+                statusMsg: "DB Project",
+                icon: "fa-database"
+            }
+        ];
+
+        // ═══════════════════════════════════════
+        // 4. RENDER PROJECTS
+        // ═══════════════════════════════════════
+        function renderProjects() {
+            const container = document.getElementById('projects-container');
+            if (!container) return;
+            container.innerHTML = '';
+            myProjects.forEach((proj, idx) => {
+                const tagsHtml = proj.tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+                const card = document.createElement('div');
+                card.className = 'project-card reveal reveal-delay-' + (idx + 1);
+                card.setAttribute('data-status', proj.statusMsg);
+                card.innerHTML = `
+                    <div class="card-header">
+                        <span>davide@kali:~/projects/${proj.id}</span>
+                        <span>[R-X]</span>
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title"><i class="fas ${proj.icon}" style="color:var(--accent); margin-right:8px; font-size:0.9rem;"></i>${proj.title}</h3>
+                        <p style="color:var(--text-muted); font-size:0.85rem; flex-grow:1; line-height:1.6;">${proj.description}</p>
+                        <div class="card-tags">${tagsHtml}</div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn btn-sm" onclick="openMyModal('${proj.id}')"><span>INFO</span></button>
+                        ${proj.githubLink ? `<a href="${proj.githubLink}" target="_blank" class="btn btn-sm btn-outline"><i class="fab fa-github"></i> <span>CODE</span></a>` : ''}
+                    </div>`;
+                container.appendChild(card);
+            });
+        }
+
+        // ═══════════════════════════════════════
+        // 5. MODAL
+        // ═══════════════════════════════════════
+        const modal = document.getElementById('project-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalBody = document.getElementById('modal-body');
+        const modalTags = document.getElementById('modal-tags');
+        const modalLink = document.getElementById('modal-link');
+
+        window.openMyModal = function(id) {
+            const data = myProjects.find(p => p.id === id);
+            if (!data) return;
+            modalTitle.textContent = data.title + '.txt';
+            modalBody.innerHTML = data.fullDescription;
+            modalTags.innerHTML = data.tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+            if (data.githubLink) {
+                modalLink.style.display = 'inline-flex';
+                modalLink.href = data.githubLink;
+            } else {
+                modalLink.style.display = 'none';
+            }
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        };
+
+        window.closeMyModal = function() { 
+            modal.style.display = 'none'; 
+            document.body.style.overflow = '';
+        };
+        window.addEventListener('click', e => { if (e.target === modal) closeMyModal(); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMyModal(); });
+
+        // ═══════════════════════════════════════
+        // 6. TYPEWRITER
+        // ═══════════════════════════════════════
+        function startTypewriter() {
+            const text = 'Davide Di Matteo';
+            const el = document.getElementById('typewriter');
+            const h1 = document.getElementById('hero-name');
+            if (!el || !h1) return;
+            let i = 0;
+            function type() {
+                if (i < text.length) {
+                    el.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(type, 80 + Math.random() * 40);
+                } else {
+                    // Activate glitch AFTER typewriter completes
+                    h1.setAttribute('data-text', text);
+                    h1.classList.add('glitch-active');
+                }
+            }
+            setTimeout(type, 300);
+        }
+
+        // ═══════════════════════════════════════
+        // 7. SCROLL ANIMATIONS & NAV
+        // ═══════════════════════════════════════
+        function initScrollObserver() {
+            const reveals = document.querySelectorAll('.reveal');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        // Animate skill bars inside
+                        const bars = entry.target.querySelectorAll('.skill-progress-fill[data-width]');
+                        bars.forEach(bar => {
+                            setTimeout(() => { bar.style.width = bar.getAttribute('data-width') + '%'; }, 200);
+                        });
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+            reveals.forEach(el => observer.observe(el));
+        }
+
+        // Active nav link
+        function initActiveNav() {
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('nav a[data-section]');
+            
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const top = section.offsetTop - 150;
+                    if (window.scrollY >= top) current = section.getAttribute('id');
+                });
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('data-section') === current) link.classList.add('active');
+                });
+            });
+        }
+
+        // Header shadow on scroll
+        function initHeaderScroll() {
+            const header = document.getElementById('main-header');
+            window.addEventListener('scroll', () => {
+                header.classList.toggle('scrolled', window.scrollY > 50);
+            });
+        }
+
+        // Back to top
+        function initBackToTop() {
+            const btn = document.getElementById('backToTop');
+            window.addEventListener('scroll', () => {
+                btn.classList.toggle('visible', window.scrollY > 400);
+            });
+        }
+
+        // Scroll progress in status bar
+        function initScrollProgress() {
+            const el = document.getElementById('scroll-progress');
+            if (!el) return;
+            window.addEventListener('scroll', () => {
+                const h = document.documentElement.scrollHeight - window.innerHeight;
+                const pct = h > 0 ? Math.round((window.scrollY / h) * 100) : 0;
+                el.textContent = pct + '%';
+            });
+        }
+
+        // ═══════════════════════════════════════
+        // 8. ANIMATED COUNTERS
+        // ═══════════════════════════════════════
+        function initCounters() {
+            // Staggered entrance animation for stat items
+            const statsBar = document.querySelector('.stats-bar');
+            if (statsBar) {
+                const statObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const items = entry.target.querySelectorAll('.stat-item');
+                            items.forEach((item, i) => {
+                                setTimeout(() => item.classList.add('stat-visible'), i * 120);
+                            });
+                            statObserver.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.3 });
+                statObserver.observe(statsBar);
+            }
+
+            // Counter animation
+            const counters = document.querySelectorAll('.stat-number[data-count]');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const el = entry.target;
+                        const target = parseInt(el.getAttribute('data-count'));
+                        animateCounter(el, target);
+                        observer.unobserve(el);
+                    }
+                });
+            }, { threshold: 0.5 });
+            counters.forEach(c => observer.observe(c));
+        }
+
+        function animateCounter(el, target) {
+            let current = 0;
+            const increment = target / 40;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    el.textContent = target + '+';
+                    clearInterval(timer);
+                } else {
+                    el.textContent = Math.floor(current);
+                }
+            }, 40);
+        }
+
+        // ═══════════════════════════════════════
+        // 9. STATUS BAR
+        // ═══════════════════════════════════════
+        function initStatusBar() {
+            const display = document.getElementById('dynamic-status');
+            const sectionEl = document.getElementById('sb-section');
+            const clockEl = document.getElementById('sb-clock');
+            const uptimeEl = document.getElementById('sb-uptime');
+            const pingEl = document.getElementById('sb-ping');
+
+            // -- Dynamic hover status --
+            if (display) {
+                document.body.addEventListener('mouseover', e => {
+                    const target = e.target.closest('[data-status]');
+                    display.textContent = target ? target.getAttribute('data-status').toUpperCase() : 'IDLE';
+                });
+            }
+
+            // -- Current section indicator --
+            if (sectionEl) {
+                const sectionMap = {
+                    hero: '~/home',
+                    about: '~/whoami',
+                    education: '~/education',
+                    experience: '~/experience',
+                    certs: '~/certifications',
+                    htb: '~/hackthebox',
+                    projects: '~/projects',
+                    contact: '~/contact'
+                };
+                const sectionIds = Object.keys(sectionMap);
+                function updateSection() {
+                    let current = 'hero';
+                    for (const id of sectionIds) {
+                        const sec = document.getElementById(id);
+                        if (sec && sec.getBoundingClientRect().top <= 150) current = id;
+                    }
+                    sectionEl.textContent = sectionMap[current] || '~/home';
+                }
+                window.addEventListener('scroll', updateSection, { passive: true });
+                updateSection();
+            }
+
+            // -- Live clock --
+            if (clockEl) {
+                function updateClock() {
+                    const now = new Date();
+                    clockEl.textContent = now.toLocaleTimeString('en-GB');
+                }
+                updateClock();
+                setInterval(updateClock, 1000);
+            }
+
+            // -- Session uptime --
+            if (uptimeEl) {
+                const startTime = Date.now();
+                function updateUptime() {
+                    const diff = Math.floor((Date.now() - startTime) / 1000);
+                    const h = Math.floor(diff / 3600);
+                    const m = Math.floor((diff % 3600) / 60);
+                    const s = diff % 60;
+                    const pad = n => String(n).padStart(2, '0');
+                    uptimeEl.textContent = h > 0
+                        ? 'UP: ' + pad(h) + ':' + pad(m) + ':' + pad(s)
+                        : 'UP: ' + pad(m) + ':' + pad(s);
+                }
+                updateUptime();
+                setInterval(updateUptime, 1000);
+            }
+
+            // -- Fake ping (oscillates realistically) --
+            if (pingEl) {
+                function updatePing() {
+                    const base = 8 + Math.floor(Math.random() * 12);
+                    pingEl.textContent = 'PING: ' + base + 'ms';
+                }
+                updatePing();
+                setInterval(updatePing, 3000);
+            }
+        }
+
+        // ═══════════════════════════════════════
+        // 10. THEME SWITCHER
+        // ═══════════════════════════════════════
+        const themes = ['amber', 'red', 'blue', 'green'];
+        let currentTheme = 0;
+        
+        // Check saved theme
+        const savedTheme = localStorage.getItem('ddm-theme');
+        if (savedTheme) {
+            const idx = themes.indexOf(savedTheme);
+            if (idx > -1) {
+                currentTheme = idx;
+                if (savedTheme === 'amber') document.body.removeAttribute('data-theme');
+                else document.body.setAttribute('data-theme', savedTheme);
+            }
+        }
+
+        window.toggleTheme = function() {
+            currentTheme = (currentTheme + 1) % themes.length;
+            const newTheme = themes[currentTheme];
+            if (newTheme === 'amber') document.body.removeAttribute('data-theme');
+            else document.body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('ddm-theme', newTheme);
+        };
+
+        // ═══════════════════════════════════════
+        // HTB DATA LOADER
+        // ═══════════════════════════════════════
+        const HTB_FALLBACK = {
+            updated: "2026-03-09T15:00:00.000Z",
+            profile: { username:"Dingooo", rank:"Hacker", nextRank:"Pro Hacker", rankProgress:8.52, points:54, ranking:888, userOwns:30, systemOwns:21, country:"IT", joinedDate:"2019-02-26" },
+            recentMachines: [
+                { name:"CCTV", os:"linux", difficulty:"easy", date:"2026-03-08" },
+                { name:"Eighteen", os:"windows", difficulty:"easy", date:"2026-02-26" },
+                { name:"Interpreter", os:"linux", difficulty:"medium", date:"2026-02-23" },
+                { name:"Pterodactyl", os:"linux", difficulty:"medium", date:"2026-02-18" },
+                { name:"WingData", os:"linux", difficulty:"easy", date:"2026-02-17" },
+                { name:"Facts", os:"linux", difficulty:"easy", date:"2026-02-03" },
+                { name:"TwoMillion", os:"linux", difficulty:"easy", date:"2025-12-24" },
+                { name:"CodePartTwo", os:"linux", difficulty:"easy", date:"2025-12-16" },
+                { name:"Cap", os:"linux", difficulty:"easy", date:"2025-12-15" }
+            ],
+            recentChallenges: [
+                { name:"OpenSecret", category:"Web", date:"2026-02-18" },
+                { name:"Spookifier", category:"Web", date:"2026-02-18" },
+                { name:"Flag Command", category:"Web", date:"2026-02-18" },
+                { name:"Magical Palindrome", category:"Web", date:"2026-01-25" },
+                { name:"SpookyPass", category:"Reversing", date:"2026-01-25" }
+            ]
+        };
+
+        function timeAgo(dateStr) {
+            const now = new Date();
+            const then = new Date(dateStr + 'T00:00:00');
+            const diffMs = now - then;
+            const days = Math.floor(diffMs / 86400000);
+            if (days < 0) return 'just now';
+            if (days === 0) return 'today';
+            if (days === 1) return 'a day ago';
+            if (days < 30) return days + ' days ago';
+            const months = Math.floor(days / 30);
+            if (months === 1) return 'a month ago';
+            if (months < 12) return months + ' months ago';
+            const years = Math.floor(days / 365);
+            if (years === 1) return 'a year ago';
+            return years + ' years ago';
+        }
+
+        function renderHTBData(data) {
+            // Stats
+            const p = data.profile;
+            if (p) {
+                const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+                setTxt('htb-rank', p.rank || '--');
+                setTxt('htb-user-owns', p.userOwns || '0');
+                setTxt('htb-system-owns', p.systemOwns || '0');
+                setTxt('htb-global-rank', '#' + (p.ranking || '?'));
+                setTxt('htb-username', '@' + (p.username || 'Player'));
+            }
+
+            // Machines
+            const mc = document.getElementById('htb-machines');
+            if (mc && data.recentMachines && data.recentMachines.length) {
+                mc.innerHTML = data.recentMachines.slice(0, 8).map(m => {
+                    const osIcon = m.os === 'windows' ? 'windows' : 'linux';
+                    const ago = m.date ? timeAgo(m.date) : '';
+                    return `
+                    <div class="htb-machine">
+                        <span class="htb-machine-name">
+                            <span class="htb-os-icon"><i class="fab fa-${osIcon}"></i></span>
+                            ${m.name}
+                        </span>
+                        <span class="htb-machine-meta">
+                            ${ago ? '<span class="htb-machine-date">' + ago + '</span>' : ''}
+                            <span class="htb-machine-diff htb-diff-${m.difficulty}">${m.difficulty.toUpperCase()}</span>
+                        </span>
+                    </div>`;
+                }).join('');
+            }
+
+            // Challenges
+            const cc = document.getElementById('htb-challenges');
+            if (cc && data.recentChallenges && data.recentChallenges.length) {
+                cc.innerHTML = data.recentChallenges.slice(0, 8).map(c => `
+                    <div class="htb-machine">
+                        <span class="htb-machine-name">
+                            <i class="fas fa-flag" style="color:var(--accent);font-size:0.8rem;"></i>
+                            ${c.name}
+                        </span>
+                        <span class="htb-machine-diff htb-diff-easy">${c.category}</span>
+                    </div>
+                `).join('');
+            }
+
+            // Last update
+            const lu = document.getElementById('htb-last-update');
+            if (lu && data.updated) {
+                const d = new Date(data.updated);
+                lu.textContent = 'Updated: ' + d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            }
+        }
+
+        function loadHTBData() {
+            // Try fetching fresh data, fall back to embedded data
+            fetch('htb-data.json?v=' + Date.now())
+                .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+                .then(data => renderHTBData(data))
+                .catch(() => renderHTBData(HTB_FALLBACK));
+        }
+
+        // ═══════════════════════════════════════
+        // 11. INIT APP
+        // ═══════════════════════════════════════
+        function initApp() {
+            renderProjects();
+            loadHTBData();
+            startTypewriter();
+            initMatrix();
+            initScrollObserver();
+            initActiveNav();
+            initHeaderScroll();
+            initBackToTop();
+            initScrollProgress();
+            initCounters();
+            initStatusBar();
+            document.getElementById('year').textContent = new Date().getFullYear();
+        }
+
+    })();
+    </script>
+</body>
+</html>
