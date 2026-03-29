@@ -1,0 +1,33 @@
+{
+  "updated": "2026-03-09T15:00:00.000Z",
+  "profile": {
+    "username": "Dingooo",
+    "rank": "Hacker",
+    "nextRank": "Pro Hacker",
+    "rankProgress": 8.52,
+    "points": 54,
+    "ranking": 888,
+    "userOwns": 30,
+    "systemOwns": 21,
+    "country": "IT",
+    "joinedDate": "2019-02-26"
+  },
+  "recentMachines": [
+    { "name": "CCTV",        "os": "linux",   "difficulty": "easy",   "date": "2026-03-08" },
+    { "name": "Eighteen",    "os": "windows", "difficulty": "easy",   "date": "2026-02-26" },
+    { "name": "Interpreter", "os": "linux",   "difficulty": "medium", "date": "2026-02-23" },
+    { "name": "Pterodactyl", "os": "linux",   "difficulty": "medium", "date": "2026-02-18" },
+    { "name": "WingData",    "os": "linux",   "difficulty": "easy",   "date": "2026-02-17" },
+    { "name": "Facts",       "os": "linux",   "difficulty": "easy",   "date": "2026-02-03" },
+    { "name": "TwoMillion",  "os": "linux",   "difficulty": "easy",   "date": "2025-12-24" },
+    { "name": "CodePartTwo", "os": "linux",   "difficulty": "easy",   "date": "2025-12-16" },
+    { "name": "Cap",         "os": "linux",   "difficulty": "easy",   "date": "2025-12-15" }
+  ],
+  "recentChallenges": [
+    { "name": "OpenSecret",        "category": "Web",       "date": "2026-02-18" },
+    { "name": "Spookifier",        "category": "Web",       "date": "2026-02-18" },
+    { "name": "Flag Command",      "category": "Web",       "date": "2026-02-18" },
+    { "name": "Magical Palindrome","category": "Web",       "date": "2026-01-25" },
+    { "name": "SpookyPass",        "category": "Reversing", "date": "2026-01-25" }
+  ]
+}
