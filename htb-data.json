@@ -1,18 +1,24 @@
 {
-  "updated": "2026-05-29T09:37:23.807Z",
+  "updated": "2026-05-30T08:17:32.460Z",
   "profile": {
     "username": "Dingooo",
     "rank": "Hacker",
     "nextRank": "Pro Hacker",
-    "rankProgress": 0,
-    "points": 42,
-    "ranking": 974,
-    "userOwns": 32,
-    "systemOwns": 23,
+    "rankProgress": 8.16,
+    "points": 54,
+    "ranking": 951,
+    "userOwns": 33,
+    "systemOwns": 24,
     "country": "IT",
     "joinedDate": "2019-02-26"
   },
   "recentMachines": [
+    {
+      "name": "Reactor",
+      "os": "linux",
+      "difficulty": "easy",
+      "date": "2026-05-29"
+    },
     {
       "name": "Kobold",
       "os": "linux",
@@ -66,12 +72,6 @@
       "os": "linux",
       "difficulty": "easy",
       "date": "2025-12-24"
-    },
-    {
-      "name": "CodePartTwo",
-      "os": "linux",
-      "difficulty": "easy",
-      "date": "2025-12-16"
     }
   ],
   "recentChallenges": [
