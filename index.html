@@ -547,7 +547,8 @@
             font-size: 0.8rem; transition: all 0.3s;
         }
         .htb-machine:hover { border-color: var(--accent); }
-        .htb-machine-name { color: var(--text-main); font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .htb-machine-name { color: var(--text-main); font-weight: 600; display: flex; align-items: center; gap: 8px; min-width: 0; }
+        .htb-machine-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .htb-os-icon {
             width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
             border: 1px solid var(--border); background: rgba(var(--accent-rgb), 0.05);
@@ -564,7 +565,11 @@
         .htb-diff-hard { color: #fe0000; border-color: rgba(254, 0, 0, 0.3); }
         .htb-diff-insane { color: #ff003c; border-color: rgba(255, 0, 60, 0.3); }
         .htb-challenge-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 6px;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 10px;
+        }
+        .htb-challenge-grid .htb-machine { min-height: 62px; gap: 12px; }
+        .htb-challenge-grid .htb-machine-title {
+            overflow: visible; text-overflow: clip; white-space: normal; line-height: 1.35;
         }
         .htb-cta { margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
         .btn-htb {
@@ -1052,7 +1057,7 @@
                         <div class="htb-profile-info">
                             <strong id="htb-username">@Dingooo</strong> &mdash;
                             Active HTB player focused on realistic penetration testing scenarios.
-                            Practicing offensive security across Linux &amp; Windows targets to sharpen real-world Red Team skills.
+                            Practicing offensive security across Linux &amp; Windows targets and defensive investigation scenarios.
                         </div>
                         <div class="htb-profile-actions">
                             <a href="https://app.hackthebox.com/profile/110118" target="_blank" class="btn btn-sm btn-htb" rel="noopener">
@@ -1111,8 +1116,8 @@
                             <i class="fas fa-puzzle-piece" style="color:var(--accent); font-size:1.1rem;"></i>
                         </div>
                         <div>
-                            <div class="htb-card-title">SOLVED CHALLENGES</div>
-                            <div class="htb-card-subtitle">CTF-style challenges completed</div>
+                            <div class="htb-card-title">SOLVED CHALLENGES &amp; SHERLOCKS</div>
+                            <div class="htb-card-subtitle">CTF and investigation labs completed</div>
                         </div>
                     </div>
                     <div class="htb-challenge-grid" id="htb-challenges">
@@ -1689,12 +1694,13 @@
                 { name:"Cap", os:"linux", difficulty:"easy", date:"2025-12-15" }
             ],
             recentChallenges: [
-                { name:"OpenSecret", category:"Web", date:"2026-02-18" },
-                { name:"Spookifier", category:"Web", date:"2026-02-18" },
-                { name:"Flag Command", category:"Web", date:"2026-02-18" },
-                { name:"Magical Palindrome", category:"Web", date:"2026-01-25" },
-                { name:"SpookyPass", category:"Reversing", date:"2026-01-25" }
-            ]
+                { name:"OpenSecret", category:"Web", difficulty:"easy", date:"2026-02-18" },
+                { name:"Spookifier", category:"Web", difficulty:"easy", date:"2026-02-18" },
+                { name:"Flag Command", category:"Web", difficulty:"easy", date:"2026-02-18" },
+                { name:"Magical Palindrome", category:"Web", difficulty:"easy", date:"2026-01-25" },
+                { name:"SpookyPass", category:"Reversing", difficulty:"easy", date:"2026-01-25" }
+            ],
+            recentSherlocks: []
         };
 
         function timeAgo(dateStr) {
@@ -1714,6 +1720,30 @@
             return years + ' years ago';
         }
 
+        function escapeHTML(value) {
+            return String(value ?? '').replace(/[&<>"']/g, char => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[char]));
+        }
+
+        function normalizeDifficulty(value) {
+            const raw = String(value || '').toLowerCase().replace(/[_\s]+/g, '-');
+            if (raw === 'very-easy' || raw === 'easy') return 'easy';
+            if (raw === 'medium') return 'medium';
+            if (raw === 'hard') return 'hard';
+            if (raw === 'insane') return 'insane';
+            return 'easy';
+        }
+
+        function difficultyLabel(value) {
+            const diff = normalizeDifficulty(value);
+            return diff.charAt(0).toUpperCase() + diff.slice(1);
+        }
+
         function renderHTBData(data) {
             // Stats
             const p = data.profile;
@@ -1731,31 +1761,51 @@
             if (mc && data.recentMachines && data.recentMachines.length) {
                 mc.innerHTML = data.recentMachines.slice(0, 8).map(m => {
                     const osIcon = m.os === 'windows' ? 'windows' : 'linux';
+                    const diff = (m.difficulty || 'easy').toLowerCase();
                     const ago = m.date ? timeAgo(m.date) : '';
                     return `
                     <div class="htb-machine">
                         <span class="htb-machine-name">
                             <span class="htb-os-icon"><i class="fab fa-${osIcon}"></i></span>
-                            ${m.name}
+                            <span class="htb-machine-title">${escapeHTML(m.name)}</span>
                         </span>
                         <span class="htb-machine-meta">
                             ${ago ? '<span class="htb-machine-date">' + ago + '</span>' : ''}
-                            <span class="htb-machine-diff htb-diff-${m.difficulty}">${m.difficulty.toUpperCase()}</span>
+                            <span class="htb-machine-diff htb-diff-${diff}">${diff.toUpperCase()}</span>
                         </span>
                     </div>`;
                 }).join('');
             }
 
-            // Challenges
+            // Challenges & Sherlocks
             const cc = document.getElementById('htb-challenges');
-            if (cc && data.recentChallenges && data.recentChallenges.length) {
-                cc.innerHTML = data.recentChallenges.slice(0, 8).map(c => `
+            if (cc) {
+                const challengeItems = (data.recentChallenges || []).map(c => ({
+                    ...c,
+                    icon: 'fa-flag',
+                    difficulty: normalizeDifficulty(c.difficulty || c.user_difficulty || c.difficultyText || c.category)
+                }));
+                const sherlockItems = (data.recentSherlocks || []).map(s => ({
+                    ...s,
+                    icon: 'fa-user-secret',
+                    difficulty: normalizeDifficulty(s.difficulty || s.difficultyText || s.category)
+                }));
+                const activityItems = challengeItems.concat(sherlockItems).sort((a, b) => {
+                    const aDate = a.date ? new Date(a.date + 'T00:00:00').getTime() : 0;
+                    const bDate = b.date ? new Date(b.date + 'T00:00:00').getTime() : 0;
+                    return bDate - aDate;
+                });
+
+                if (activityItems.length) cc.innerHTML = activityItems.slice(0, 8).map(item => `
                     <div class="htb-machine">
                         <span class="htb-machine-name">
-                            <i class="fas fa-flag" style="color:var(--accent);font-size:0.8rem;"></i>
-                            ${c.name}
+                            <i class="fas ${item.icon}" style="color:var(--accent);font-size:0.8rem;"></i>
+                            <span class="htb-machine-title">${escapeHTML(item.name)}</span>
                         </span>
-                        <span class="htb-machine-diff htb-diff-easy">${c.category}</span>
+                        <span class="htb-machine-meta">
+                            ${item.date ? '<span class="htb-machine-date">' + timeAgo(item.date) + '</span>' : ''}
+                            <span class="htb-machine-diff htb-diff-${item.difficulty}">${difficultyLabel(item.difficulty)}</span>
+                        </span>
                     </div>
                 `).join('');
             }

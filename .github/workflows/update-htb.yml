@@ -13,12 +13,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: '24'
 
       - name: Fetch HTB data and update JSON
         env:
@@ -37,7 +37,7 @@ jobs:
             process.exit(1);
           }
 
-          function apiGet(path) {
+          function apiGet(path, { optional = false } = {}) {
             return new Promise((resolve, reject) => {
               const opts = {
                 hostname: BASE_URL,
@@ -52,6 +52,11 @@ jobs:
                 res.on('data', chunk => body += chunk);
                 res.on('end', () => {
                   if (res.statusCode !== 200) {
+                    if (optional) {
+                      console.warn(`Optional HTB API request failed: ${path} -> HTTP ${res.statusCode}`);
+                      resolve(null);
+                      return;
+                    }
                     reject(new Error(`HTTP ${res.statusCode}: ${body.slice(0, 200)}`));
                     return;
                   }
@@ -60,6 +65,77 @@ jobs:
                 });
               }).on('error', reject);
             });
+          }
+
+          function firstArray(...candidates) {
+            for (const candidate of candidates) {
+              if (Array.isArray(candidate)) return candidate;
+            }
+            return [];
+          }
+
+          function dateOnly(value) {
+            return value ? String(value).split('T')[0] : null;
+          }
+
+          function normalizeDifficulty(value, fallback = 'easy') {
+            const raw = String(value || '').toLowerCase().replace(/[_\s]+/g, '-');
+            if (raw === 'very-easy' || raw === 'easy') return 'easy';
+            if (raw === 'medium') return 'medium';
+            if (raw === 'hard') return 'hard';
+            if (raw === 'insane') return 'insane';
+            return fallback;
+          }
+
+          function firstText(...values) {
+            for (const value of values) {
+              if (typeof value === 'string' && value.trim()) return value;
+            }
+            return null;
+          }
+
+          function uniqueByIdOrName(items) {
+            const seen = new Set();
+            return items.filter(item => {
+              const key = item.id ? `id:${item.id}` : `name:${String(item.name || '').toLowerCase()}`;
+              if (seen.has(key)) return false;
+              seen.add(key);
+              return true;
+            });
+          }
+
+          function isSherlockActivity(activity) {
+            return [
+              activity.object_type,
+              activity.type,
+              activity.content_type,
+              activity.target_type,
+              activity.category
+            ].some(value => /sherlock/i.test(String(value || '')));
+          }
+
+          function normalizeSherlock(item, fallbackDate = null) {
+            const name = item.name || item.title || item.sherlock_name || item.content_name;
+            if (!name) return null;
+            return {
+              id: item.id || item.sherlock_id || item.content_id || null,
+              name,
+              category: firstText(item.category_name, item.category?.name, item.sherlock_category, item.category, 'Sherlock'),
+              difficulty: normalizeDifficulty(item.difficulty_text || item.difficultyText || item.difficulty_name || item.difficulty?.name || item.difficulty?.text || item.difficulty, ''),
+              date: dateOnly(item.date || item.owned_at || item.completed_at || item.solved_at || item.own_date || fallbackDate)
+            };
+          }
+
+          function normalizeChallenge(item, fallbackDate = null) {
+            const name = item.name || item.title || item.challenge_name || item.content_name;
+            if (!name) return null;
+            return {
+              id: item.id || item.challenge_id || item.content_id || null,
+              name,
+              category: firstText(item.challenge_category, item.challenge_category_name, item.category_name, item.category?.name, item.category, 'Challenge'),
+              difficulty: normalizeDifficulty(item.difficulty_text || item.difficultyText || item.difficulty_name || item.difficulty?.name || item.difficulty?.text || item.user_difficulty || item.userDifficulty || item.difficulty, ''),
+              date: dateOnly(item.date || item.owned_at || item.completed_at || item.solved_at || item.own_date || fallbackDate)
+            };
           }
 
           function pointsToDifficulty(points, type) {
@@ -75,14 +151,144 @@ jobs:
             return 'easy';
           }
 
+          async function fetchUserActivity() {
+            const activityV5 = await apiGet(`/api/v5/user/profile/activity/${HTB_USER_ID}?per_page=100`, { optional: true });
+            const v5Activities = firstArray(
+              activityV5?.data,
+              activityV5?.profile?.activity,
+              activityV5?.info?.activity,
+              activityV5
+            );
+            if (v5Activities.length) return v5Activities;
+
+            const activityV4 = await apiGet(`/api/v4/user/profile/activity/${HTB_USER_ID}`);
+            return firstArray(
+              activityV4?.profile?.activity,
+              activityV4?.data,
+              activityV4?.info?.activity,
+              activityV4
+            );
+          }
+
+          async function fetchRecentChallenges(activities) {
+            const recent = activities
+              .filter(a => a.object_type === 'challenge')
+              .slice(0, 8);
+
+            const challenges = [];
+            for (const item of recent) {
+              const base = normalizeChallenge(item, item.date);
+              if (!base) continue;
+
+              let details = null;
+              if (base.id) {
+                try {
+                  const response = await apiGet(`/api/v4/challenge/info/${base.id}`, { optional: true });
+                  details = response?.info || response?.data || response;
+                } catch (e) {
+                  console.warn(`Could not fetch details for challenge ${base.name} (${base.id}): ${e.message}`);
+                }
+              }
+
+              const merged = normalizeChallenge({ ...base, ...details }, base.date);
+              challenges.push(merged || base);
+            }
+
+            return challenges.map(({ name, category, difficulty, date }) => ({
+              name,
+              category,
+              difficulty: difficulty || 'easy',
+              date
+            }));
+          }
+
+          async function fetchOwnedSherlocksFromCatalog() {
+            const owned = [];
+
+            for (let page = 1; page <= 10; page++) {
+              const params = new URLSearchParams({
+                state: 'all_sherlocks',
+                page: String(page),
+                per_page: '100'
+              });
+              const response = await apiGet(`/api/v4/sherlocks?${params}`, { optional: true });
+              if (!response) break;
+
+              const rows = firstArray(response.data, response.info, response.sherlocks, response);
+              owned.push(...rows.filter(item => item.is_owned || item.owned || item.completed || item.is_completed));
+
+              const meta = response.meta || response.pagination || {};
+              const currentPage = Number(meta.current_page || page);
+              const lastPage = Number(meta.last_page || meta.total_pages || page);
+              if (!rows.length || currentPage >= lastPage) break;
+            }
+
+            return owned.map(item => normalizeSherlock(item)).filter(Boolean);
+          }
+
+          function collectCompletedSherlocks(value, output = []) {
+            if (!value || typeof value !== 'object') return output;
+            if (Array.isArray(value)) {
+              value.forEach(item => collectCompletedSherlocks(item, output));
+              return output;
+            }
+
+            const markedComplete = value.is_owned || value.owned || value.completed || value.is_completed || value.solved;
+            const normalized = markedComplete ? normalizeSherlock(value) : null;
+            if (normalized) output.push(normalized);
+
+            Object.values(value).forEach(item => collectCompletedSherlocks(item, output));
+            return output;
+          }
+
+          async function fetchOwnedSherlocksFromProgress() {
+            const privateProgress = await apiGet(`/api/v4/user/profile/progress/sherlocks/${HTB_USER_ID}`, { optional: true });
+            const publicProgress = privateProgress || await apiGet(`/api/v4/profile/progress/sherlocks/${HTB_USER_ID}`, { optional: true });
+            return uniqueByIdOrName(collectCompletedSherlocks(publicProgress));
+          }
+
+          async function fetchRecentSherlocks(activities) {
+            const fromActivity = activities
+              .filter(isSherlockActivity)
+              .map(item => normalizeSherlock(item, item.date))
+              .filter(Boolean);
+
+            const [fromCatalog, fromProgress] = await Promise.all([
+              fetchOwnedSherlocksFromCatalog(),
+              fetchOwnedSherlocksFromProgress()
+            ]);
+
+            const merged = new Map();
+            for (const item of [...fromProgress, ...fromCatalog, ...fromActivity]) {
+              const key = item.id ? `id:${item.id}` : `name:${item.name.toLowerCase()}`;
+              const previous = merged.get(key) || {};
+              merged.set(key, {
+                ...previous,
+                ...item,
+                category: item.category || previous.category || 'Sherlock',
+                difficulty: item.difficulty || previous.difficulty || '',
+                date: item.date || previous.date || null
+              });
+            }
+
+            return [...merged.values()]
+              .sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0))
+              .slice(0, 8)
+              .map(({ name, category, difficulty, date }) => ({
+                name,
+                category: category || 'Sherlock',
+                difficulty: difficulty || 'easy',
+                date
+              }));
+          }
+
           async function main() {
             console.log('Fetching HTB profile...');
             const profileData = await apiGet(`/api/v4/user/profile/basic/${HTB_USER_ID}`);
             const profile = profileData.profile;
 
             console.log('Fetching HTB activity...');
-            const activityData = await apiGet(`/api/v4/user/profile/activity/${HTB_USER_ID}`);
-            const activities = activityData.profile.activity;
+            const activities = await fetchUserActivity();
 
             const rootedMachines = [];
             const seenMachineIds = new Set();
@@ -110,18 +316,15 @@ jobs:
                 name: m.name,
                 os: os,
                 difficulty: difficulty,
-                date: m.date.split('T')[0]
+                date: dateOnly(m.date)
               });
             }
 
-            const challenges = activities
-              .filter(a => a.object_type === 'challenge')
-              .slice(0, 8)
-              .map(c => ({
-                name: c.name,
-                category: c.challenge_category || 'Misc',
-                date: c.date.split('T')[0]
-              }));
+            console.log('Fetching HTB challenge details...');
+            const challenges = await fetchRecentChallenges(activities);
+
+            console.log('Fetching HTB Sherlocks...');
+            const recentSherlocks = await fetchRecentSherlocks(activities);
 
             const output = {
               updated: new Date().toISOString(),
@@ -138,11 +341,12 @@ jobs:
                 joinedDate: profile.joined_date ? profile.joined_date.split('T')[0] : null
               },
               recentMachines: recentMachines,
-              recentChallenges: challenges
+              recentChallenges: challenges,
+              recentSherlocks: recentSherlocks
             };
 
             require('fs').writeFileSync('htb-data.json', JSON.stringify(output, null, 2) + '\n');
-            console.log(`Done! ${recentMachines.length} machines, ${challenges.length} challenges written.`);
+            console.log(`Done! ${recentMachines.length} machines, ${challenges.length} challenges, ${recentSherlocks.length} Sherlocks written.`);
           }
 
           main().catch(err => {
