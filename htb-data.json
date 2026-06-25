@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-25T11:09:52.594Z",
+  "updated": "2026-06-25T11:17:03.609Z",
   "profile": {
     "username": "Dingooo",
     "rank": "Hacker",
@@ -12,32 +12,142 @@
     "country": "IT",
     "joinedDate": "2019-02-26"
   },
-  "recentMachines": [],
-  "recentChallenges": [],
+  "recentMachines": [
+    {
+      "name": "Connected",
+      "os": "linux",
+      "difficulty": "easy",
+      "date": "2026-06-16T19:47:56.000Z"
+    },
+    {
+      "name": "Reactor",
+      "os": "linux",
+      "difficulty": "easy",
+      "date": "2026-05-29T13:44:31.000Z"
+    },
+    {
+      "name": "Kobold",
+      "os": "linux",
+      "difficulty": "easy",
+      "date": "2026-03-24T21:07:11.000Z"
+    },
+    {
+      "name": "VariaType",
+      "os": "linux",
+      "difficulty": "medium",
+      "date": "2026-03-15T10:32:28.000Z"
+    },
+    {
+      "name": "CCTV",
+      "os": "linux",
+      "difficulty": "easy",
+      "date": "2026-03-08T16:44:22.000Z"
+    },
+    {
+      "name": "Eighteen",
+      "os": "windows",
+      "difficulty": "easy",
+      "date": "2026-02-26T17:27:58.000Z"
+    },
+    {
+      "name": "Interpreter",
+      "os": "linux",
+      "difficulty": "medium",
+      "date": "2026-02-23T13:02:26.000Z"
+    },
+    {
+      "name": "Pterodactyl",
+      "os": "linux",
+      "difficulty": "medium",
+      "date": "2026-02-18T22:33:53.000Z"
+    },
+    {
+      "name": "WingData",
+      "os": "linux",
+      "difficulty": "easy",
+      "date": "2026-02-17T13:52:50.000Z"
+    },
+    {
+      "name": "Facts",
+      "os": "linux",
+      "difficulty": "easy",
+      "date": "2026-02-03T11:30:20.000Z"
+    }
+  ],
+  "recentChallenges": [
+    {
+      "name": "OpenSecret",
+      "category": "Web",
+      "difficulty": "easy",
+      "date": "2026-02-18T23:15:13.000Z"
+    },
+    {
+      "name": "Spookifier",
+      "category": "Web",
+      "difficulty": "easy",
+      "date": "2026-02-18T23:13:06.000Z"
+    },
+    {
+      "name": "Flag Command",
+      "category": "Web",
+      "difficulty": "easy",
+      "date": "2026-02-18T22:51:45.000Z"
+    },
+    {
+      "name": "Magical Palindrome",
+      "category": "Web",
+      "difficulty": "easy",
+      "date": "2026-01-25T18:43:22.000Z"
+    },
+    {
+      "name": "SpookyPass",
+      "category": "Reversing",
+      "difficulty": "easy",
+      "date": "2026-01-25T17:57:40.000Z"
+    },
+    {
+      "name": "Behind the Scenes",
+      "category": "Reversing",
+      "difficulty": "easy",
+      "date": "2023-04-06T21:49:26.000Z"
+    },
+    {
+      "name": "Impossible Password",
+      "category": "Reversing",
+      "difficulty": "easy",
+      "date": "2023-04-06T21:23:18.000Z"
+    },
+    {
+      "name": "HackyBird",
+      "category": "GamePwn",
+      "difficulty": "easy",
+      "date": "2023-04-01T21:04:02.000Z"
+    }
+  ],
   "recentSherlocks": [
     {
       "name": "Stonks",
-      "category": "Sherlock",
-      "difficulty": "easy",
-      "date": null
+      "category": "DFIR",
+      "difficulty": "insane",
+      "date": "2026-06-24T14:38:57.000Z"
     },
     {
       "name": "JobApplicant",
-      "category": "Sherlock",
-      "difficulty": "easy",
-      "date": null
+      "category": "DFIR",
+      "difficulty": "hard",
+      "date": "2026-06-24T10:11:52.000Z"
     },
     {
       "name": "Antarctica",
-      "category": "Sherlock",
-      "difficulty": "easy",
-      "date": null
+      "category": "Malware Analysis",
+      "difficulty": "medium",
+      "date": "2026-06-24T09:31:57.000Z"
     },
     {
       "name": "Brutus",
-      "category": "Sherlock",
+      "category": "DFIR",
       "difficulty": "easy",
-      "date": null
+      "date": "2026-06-24T08:53:56.000Z"
     }
   ]
 }

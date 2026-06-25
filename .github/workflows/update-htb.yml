@@ -75,7 +75,7 @@ jobs:
           }
 
           function dateOnly(value) {
-            return value ? String(value).split('T')[0] : null;
+            return value ? String(value) : null;
           }
 
           function normalizeDifficulty(value, fallback = 'easy') {
@@ -114,15 +114,34 @@ jobs:
             ].some(value => /sherlock/i.test(String(value || '')));
           }
 
+          function isChallengeActivity(activity) {
+            return activity.object_type === 'challenge' || activity.type === 'challenge';
+          }
+
+          function isMachineRootActivity(activity) {
+            return (
+              (activity.object_type === 'machine' && activity.type === 'root') ||
+              activity.type === 'root'
+            );
+          }
+
+          function pointsToSherlockDifficulty(points) {
+            const value = Number(points);
+            if (value >= 5) return 'insane';
+            if (value >= 4) return 'hard';
+            if (value >= 3) return 'medium';
+            return 'easy';
+          }
+
           function normalizeSherlock(item, fallbackDate = null) {
             const name = item.name || item.title || item.sherlock_name || item.content_name;
             if (!name) return null;
             return {
               id: item.id || item.sherlock_id || item.content_id || null,
               name,
-              category: firstText(item.category_name, item.category?.name, item.sherlock_category, item.category, 'Sherlock'),
-              difficulty: normalizeDifficulty(item.difficulty_text || item.difficultyText || item.difficulty_name || item.difficulty?.name || item.difficulty?.text || item.difficulty, ''),
-              date: dateOnly(item.date || item.owned_at || item.completed_at || item.solved_at || item.own_date || fallbackDate)
+              category: firstText(item.categoryName, item.category_name, item.category?.name, item.sherlock_category, item.category, 'Sherlock'),
+              difficulty: normalizeDifficulty(item.difficulty_text || item.difficultyText || item.difficulty_name || item.difficulty?.name || item.difficulty?.text || item.difficulty || pointsToSherlockDifficulty(item.points), ''),
+              date: dateOnly(item.date || item.ownDate || item.owned_at || item.completed_at || item.solved_at || item.own_date || fallbackDate)
             };
           }
 
@@ -132,9 +151,9 @@ jobs:
             return {
               id: item.id || item.challenge_id || item.content_id || null,
               name,
-              category: firstText(item.challenge_category, item.challenge_category_name, item.category_name, item.category?.name, item.category, 'Challenge'),
+              category: firstText(item.categoryName, item.challenge_category, item.challenge_category_name, item.category_name, item.category?.name, item.category, 'Challenge'),
               difficulty: normalizeDifficulty(item.difficulty_text || item.difficultyText || item.difficulty_name || item.difficulty?.name || item.difficulty?.text || item.user_difficulty || item.userDifficulty || item.difficulty, ''),
-              date: dateOnly(item.date || item.owned_at || item.completed_at || item.solved_at || item.own_date || fallbackDate)
+              date: dateOnly(item.date || item.ownDate || item.owned_at || item.completed_at || item.solved_at || item.own_date || fallbackDate)
             };
           }
 
@@ -172,7 +191,7 @@ jobs:
 
           async function fetchRecentChallenges(activities) {
             const recent = activities
-              .filter(a => a.object_type === 'challenge')
+              .filter(isChallengeActivity)
               .slice(0, 8);
 
             const challenges = [];
@@ -205,22 +224,24 @@ jobs:
           async function fetchOwnedSherlocksFromCatalog() {
             const owned = [];
 
-            for (let page = 1; page <= 10; page++) {
-              const params = new URLSearchParams({
-                state: 'all_sherlocks',
-                page: String(page),
-                per_page: '100'
-              });
-              const response = await apiGet(`/api/v4/sherlocks?${params}`, { optional: true });
-              if (!response) break;
+            for (const state of ['active', 'retired']) {
+              for (let page = 1; page <= 10; page++) {
+                const params = new URLSearchParams({
+                  state,
+                  page: String(page),
+                  per_page: '100'
+                });
+                const response = await apiGet(`/api/v4/sherlocks?${params}`, { optional: true });
+                if (!response) break;
 
-              const rows = firstArray(response.data, response.info, response.sherlocks, response);
-              owned.push(...rows.filter(item => item.is_owned || item.owned || item.completed || item.is_completed));
+                const rows = firstArray(response.data, response.info, response.sherlocks, response);
+                owned.push(...rows.filter(item => item.is_owned || item.owned || item.completed || item.is_completed));
 
-              const meta = response.meta || response.pagination || {};
-              const currentPage = Number(meta.current_page || page);
-              const lastPage = Number(meta.last_page || meta.total_pages || page);
-              if (!rows.length || currentPage >= lastPage) break;
+                const meta = response.meta || response.pagination || {};
+                const currentPage = Number(meta.current_page || page);
+                const lastPage = Number(meta.last_page || meta.total_pages || page);
+                if (!rows.length || currentPage >= lastPage) break;
+              }
             }
 
             return owned.map(item => normalizeSherlock(item)).filter(Boolean);
@@ -253,13 +274,23 @@ jobs:
               .map(item => normalizeSherlock(item, item.date))
               .filter(Boolean);
 
+            const detailedActivity = [];
+            for (const item of fromActivity.slice(0, 8)) {
+              let details = null;
+              if (item.id) {
+                const response = await apiGet(`/api/v4/sherlocks/${item.id}`, { optional: true });
+                details = response?.data || response?.info || response;
+              }
+              detailedActivity.push(normalizeSherlock({ ...item, ...details, date: item.date }, item.date) || item);
+            }
+
             const [fromCatalog, fromProgress] = await Promise.all([
               fetchOwnedSherlocksFromCatalog(),
               fetchOwnedSherlocksFromProgress()
             ]);
 
             const merged = new Map();
-            for (const item of [...fromProgress, ...fromCatalog, ...fromActivity]) {
+            for (const item of [...fromProgress, ...fromCatalog, ...detailedActivity]) {
               const key = item.id ? `id:${item.id}` : `name:${item.name.toLowerCase()}`;
               const previous = merged.get(key) || {};
               merged.set(key, {
@@ -293,7 +324,7 @@ jobs:
             const rootedMachines = [];
             const seenMachineIds = new Set();
             for (const a of activities) {
-              if (a.object_type === 'machine' && a.type === 'root' && !seenMachineIds.has(a.id)) {
+              if (isMachineRootActivity(a) && !seenMachineIds.has(a.id)) {
                 seenMachineIds.add(a.id);
                 rootedMachines.push(a);
               }
@@ -316,7 +347,7 @@ jobs:
                 name: m.name,
                 os: os,
                 difficulty: difficulty,
-                date: dateOnly(m.date)
+                date: dateOnly(m.date || m.ownDate)
               });
             }
 
