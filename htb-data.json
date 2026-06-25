@@ -1,119 +1,43 @@
 {
-  "updated": "2026-06-17T07:45:04.146Z",
+  "updated": "2026-06-25T11:09:52.594Z",
   "profile": {
     "username": "Dingooo",
     "rank": "Hacker",
     "nextRank": "Pro Hacker",
     "rankProgress": 0,
     "points": 28,
-    "ranking": 987,
+    "ranking": 983,
     "userOwns": 35,
     "systemOwns": 25,
     "country": "IT",
     "joinedDate": "2019-02-26"
   },
-  "recentMachines": [
+  "recentMachines": [],
+  "recentChallenges": [],
+  "recentSherlocks": [
     {
-      "name": "Connected",
-      "os": "linux",
+      "name": "Stonks",
+      "category": "Sherlock",
       "difficulty": "easy",
-      "date": "2026-06-16"
+      "date": null
     },
     {
-      "name": "Reactor",
-      "os": "linux",
+      "name": "JobApplicant",
+      "category": "Sherlock",
       "difficulty": "easy",
-      "date": "2026-05-29"
+      "date": null
     },
     {
-      "name": "Kobold",
-      "os": "linux",
+      "name": "Antarctica",
+      "category": "Sherlock",
       "difficulty": "easy",
-      "date": "2026-03-24"
+      "date": null
     },
     {
-      "name": "VariaType",
-      "os": "linux",
-      "difficulty": "medium",
-      "date": "2026-03-15"
-    },
-    {
-      "name": "CCTV",
-      "os": "linux",
+      "name": "Brutus",
+      "category": "Sherlock",
       "difficulty": "easy",
-      "date": "2026-03-08"
-    },
-    {
-      "name": "Eighteen",
-      "os": "windows",
-      "difficulty": "easy",
-      "date": "2026-02-26"
-    },
-    {
-      "name": "Interpreter",
-      "os": "linux",
-      "difficulty": "medium",
-      "date": "2026-02-23"
-    },
-    {
-      "name": "Pterodactyl",
-      "os": "linux",
-      "difficulty": "medium",
-      "date": "2026-02-18"
-    },
-    {
-      "name": "WingData",
-      "os": "linux",
-      "difficulty": "easy",
-      "date": "2026-02-17"
-    },
-    {
-      "name": "Facts",
-      "os": "linux",
-      "difficulty": "easy",
-      "date": "2026-02-03"
-    }
-  ],
-  "recentChallenges": [
-    {
-      "name": "OpenSecret",
-      "category": "Web",
-      "date": "2026-02-18"
-    },
-    {
-      "name": "Spookifier",
-      "category": "Web",
-      "date": "2026-02-18"
-    },
-    {
-      "name": "Flag Command",
-      "category": "Web",
-      "date": "2026-02-18"
-    },
-    {
-      "name": "Magical Palindrome",
-      "category": "Web",
-      "date": "2026-01-25"
-    },
-    {
-      "name": "SpookyPass",
-      "category": "Reversing",
-      "date": "2026-01-25"
-    },
-    {
-      "name": "Behind the Scenes",
-      "category": "Reversing",
-      "date": "2023-04-06"
-    },
-    {
-      "name": "Impossible Password",
-      "category": "Reversing",
-      "date": "2023-04-06"
-    },
-    {
-      "name": "HackyBird",
-      "category": "GamePwn",
-      "date": "2023-04-01"
+      "date": null
     }
   ]
 }
