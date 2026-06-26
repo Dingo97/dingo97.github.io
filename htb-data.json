@@ -1,12 +1,12 @@
 {
-  "updated": "2026-06-25T11:24:59.478Z",
+  "updated": "2026-06-26T07:14:19.322Z",
   "profile": {
     "username": "Dingooo",
     "rank": "Hacker",
     "nextRank": "Pro Hacker",
     "rankProgress": 0,
-    "points": 28,
-    "ranking": 983,
+    "points": 31,
+    "ranking": 989,
     "userOwns": 35,
     "systemOwns": 25,
     "country": "IT",
@@ -76,6 +76,24 @@
   ],
   "recentChallenges": [
     {
+      "name": "Bobby's Bistro",
+      "category": "Web",
+      "difficulty": "easy",
+      "date": "2026-06-25T15:16:16.000Z"
+    },
+    {
+      "name": "GameLoader",
+      "category": "Reversing",
+      "difficulty": "easy",
+      "date": "2026-06-25T14:03:50.000Z"
+    },
+    {
+      "name": "Plug & Pray",
+      "category": "Hardware",
+      "difficulty": "easy",
+      "date": "2026-06-25T13:42:41.000Z"
+    },
+    {
       "name": "OpenSecret",
       "category": "Web",
       "difficulty": "easy",
@@ -104,24 +122,6 @@
       "category": "Reversing",
       "difficulty": "easy",
       "date": "2026-01-25T17:57:40.000Z"
-    },
-    {
-      "name": "Behind the Scenes",
-      "category": "Reversing",
-      "difficulty": "easy",
-      "date": "2023-04-06T21:49:26.000Z"
-    },
-    {
-      "name": "Impossible Password",
-      "category": "Reversing",
-      "difficulty": "easy",
-      "date": "2023-04-06T21:23:18.000Z"
-    },
-    {
-      "name": "HackyBird",
-      "category": "GamePwn",
-      "difficulty": "easy",
-      "date": "2023-04-01T21:04:02.000Z"
     }
   ],
   "recentSherlocks": [
