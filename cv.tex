@@ -1,0 +1,134 @@
+\documentclass[letterpaper,11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[italian]{babel}
+\usepackage{tabularx}
+\usepackage{mathptmx}
+
+% Harvard-style layout from the supplied main.tex.
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\setlength{\footskip}{12pt}
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-.5in}
+\addtolength{\textheight}{1.0in}
+\urlstyle{same}
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+\titleformat{\section}{\vspace{-4pt}\scshape\raggedright\large}{}{0em}{}[\color{black}\titlerule\vspace{-5pt}]
+\newcommand{\resumeItem}[1]{\item\small{{#1\vspace{-2pt}}}}
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-1pt}\item
+  \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+    \textbf{#1} & #2 \\
+    \textit{\small#3} & \textit{\small#4} \\
+  \end{tabular*}\vspace{-3pt}
+}
+\newcommand{\resumeProjectHeading}[2]{
+  \item
+  \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+    \small#1 & #2 \\
+  \end{tabular*}\vspace{-3pt}
+}
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in,label={},topsep=3pt,itemsep=4pt,parsep=0pt]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[topsep=3pt,itemsep=2pt,parsep=0pt]}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+\hypersetup{pdftitle={Davide Di Matteo - Curriculum Vitae (IT)},pdfauthor={Davide Di Matteo},pdflang={it-IT}}
+
+\begin{document}
+\begin{center}
+  \textbf{\Huge\scshape Davide Di Matteo} \\ \vspace{1pt}
+  Via Taranto 178, Roma, 00182 \\ \vspace{1pt}
+  \small (+39) 346 134 5120 $|$
+  \href{mailto:davidedimatteo97@gmail.com}{\underline{davidedimatteo97@gmail.com}} $|$
+  \href{https://linkedin.com/in/davide-di-matteo}{\underline{linkedin.com/in/davide-di-matteo}}
+\end{center}
+
+\section{Formazione}
+\resumeSubHeadingListStart
+  \resumeSubheading
+    {Università degli Studi di Roma ``Tor Vergata''}{Roma, Italia}
+    {Laurea Triennale in Informatica}{Set 2016 -- Ott 2022}
+    \resumeItemListStart
+      \resumeItem{\textbf{Tesi:} ``Analisi di sicurezza e capacità dei software Anti Malware su Linux'' -- Sviluppo di tecniche di evasione malware (Process Injection, Memory Shellcode) in C e Python.}
+    \resumeItemListEnd
+  \resumeSubheading{Certificazioni Professionali}{}{Cybersecurity \& Networking}{}
+    \resumeItemListStart
+      \resumeItem{\textbf{Certified Ethical Hacker (CEH)} -- EC-Council (Nov 2025)}
+      \resumeItem{\textbf{CompTIA Security+} -- CompTIA (Ott 2017)}
+    \resumeItemListEnd
+\resumeSubHeadingListEnd
+
+\section{Esperienza Professionale}
+\resumeSubHeadingListStart
+  \resumeSubheading{Aeroporti di Roma (ADR)}{Roma, Italia}
+    {Cyber Security Specialist}{Mar 2026 -- Presente}
+    \resumeItemListStart
+      \resumeItem{Coordinamento di un team dedicato al ciclo di Vulnerability Management dei sistemi aeroportuali.}
+      \resumeItem{Gestione delle attività VAPT nel Perimetro di Sicurezza Nazionale Cibernetica (PSNC): coordinamento dei fornitori, monitoraggio delle remediation e retest.}
+      \resumeItem{Supporto all'Incident Response con il CSOC e collaborazione con i team di Cyber Threat Intelligence.}
+    \resumeItemListEnd
+  \resumeSubheading{Leonardo S.p.A.}{Roma, Italia}
+    {Cyber Security Assurance and Red Team}{Nov 2024 -- Feb 2026}
+    \resumeItemListStart
+      \resumeItem{Vulnerability Assessment e Penetration Testing su sistemi INFOSEC e applicazioni critiche con Nessus, Burp Suite e Nmap.}
+      \resumeItem{Supporto alle certificazioni Common Criteria (ISO/IEC 15408), con documentazione tecnica e piani di remediation.}
+      \resumeItem{Collaborazione con il Laboratorio Valutazione Sicurezza (LVS) nell'analisi della resistenza agli attacchi e nello sviluppo di procedure di test per il Laboratorio Accreditato di Prova (LAP).}
+    \resumeItemListEnd
+  \resumeSubheading{Sipal S.p.A.}{Roma, Italia}
+    {Cybersecurity Analyst $|$ Operatore Ce.Va.}{Dic 2022 -- Nov 2024}
+    \resumeItemListStart
+      \resumeItem{Analisi dei requisiti di sicurezza e penetration test su prodotti dei clienti per le valutazioni Common Criteria.}
+      \resumeItem{Analisi statica e dinamica (SAST/DAST) e vulnerability scanning per individuare vulnerabilità nel codice e nell'infrastruttura.}
+      \resumeItem{Collaborazione con gli sviluppatori su mitigazione delle vulnerabilità e documentazione tecnica di valutazione.}
+    \resumeItemListEnd
+\resumeSubHeadingListEnd
+
+\section{Progetti Tecnici e Ricerca}
+\resumeSubHeadingListStart
+  \resumeProjectHeading{\textbf{\href{https://dingo97.github.io/it/research/CVE-2026-20516/}{CVE-2026-20516 -- MediaTek}} $|$ \emph{Android TV}}{Set 2026}
+    \resumeItemListStart
+      \resumeItem{Ricercatore accreditato per una vulnerabilità \emph{confused deputy} in MiracastService (CVSS 5.5). Riproduzione via ADB, analisi del confine di fiducia e divulgazione coordinata con il vendor.}
+    \resumeItemListEnd
+  \resumeProjectHeading{\textbf{Linux Malware Evasion Research} $|$ \emph{C, Python}}{Tesi Sperimentale}
+    \resumeItemListStart
+      \resumeItem{Sviluppo di malware custom in C e Python per testare l'efficacia di sette antivirus Linux.}
+      \resumeItem{Implementazione di Process Injection, Self-Injection e Direct Memory Shellcode Writing per valutare l'evasione dei controlli signature-based.}
+    \resumeItemListEnd
+  \resumeProjectHeading{\textbf{Piattaforma E-commerce Sicura} $|$ \emph{PHP, MySQL, HTML/CSS}}{Progetto Accademico}
+    \resumeItemListStart
+      \resumeItem{Sviluppo di un portale e-commerce full-stack con misure di sicurezza difensiva e gestione degli ordini; validazione dell'input per prevenire SQL Injection e XSS.}
+    \resumeItemListEnd
+  \resumeProjectHeading{\textbf{Database Management System (SoundCloud Clone)} $|$ \emph{MySQL, MongoDB}}{Progetto Accademico}
+    \resumeItemListStart
+      \resumeItem{Progettazione dello schema ER e implementazione di database relazionali e NoSQL ottimizzati per le prestazioni.}
+    \resumeItemListEnd
+\resumeSubHeadingListEnd
+
+\section{Competenze Tecniche}
+\begin{itemize}[leftmargin=0.15in,label={},topsep=3pt]
+  \small\item{
+    \textbf{Vulnerability Assessment \& Pentesting}: Nessus, Burp Suite, Nmap, Metasploit, SQLmap, Wireshark, OWASP Top 10 \\
+    \textbf{Standard di Sicurezza}: Common Criteria (ISO/IEC 15408), metodologia CEH, PTES \\
+    \textbf{Programmazione}: C, Python (Scripting \& Exploit Dev), Bash, PHP, SQL, HTML/CSS, JavaScript \\
+    \textbf{Sistemi Operativi}: Linux (Admin \& Hardening, Kali, Ubuntu), Windows \\
+    \textbf{Lingue}: Italiano (Madrelingua), Inglese (B2 - Tecnico)
+  }
+\end{itemize}
+\end{document}
