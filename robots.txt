@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://dingo97.github.io/sitemap.xml
