@@ -4,8 +4,10 @@
   "private": true,
   "description": "Static GitHub Pages portfolio. No build or runtime packages required.",
   "scripts": {
+    "build:locales": "node scripts/build-locales.cjs",
+    "record:history": "node scripts/record-htb-history.cjs",
     "test": "node --test tests/*.test.cjs",
-    "check": "node --check assets/site.js && node --check assets/htb.js && npm test"
+    "check": "node --check assets/site.js && node --check assets/htb.js && node --check assets/features.js && node --check assets/history.js && node --check scripts/build-locales.cjs && node --check scripts/record-htb-history.cjs && npm test"
   },
   "devDependencies": {
     "jsdom": "26.1.0"

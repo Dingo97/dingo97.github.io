@@ -386,11 +386,16 @@ jobs:
           });
           SCRIPT
 
+      - name: Record daily profile history
+        continue-on-error: true
+        run: node scripts/record-htb-history.cjs
+
       - name: Commit and push if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add htb-data.json
+          if [ -f htb-history.json ]; then git add htb-history.json; fi
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else

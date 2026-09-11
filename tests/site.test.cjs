@@ -4,7 +4,12 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { JSDOM } = require("jsdom");
 const root = path.resolve(__dirname, "..");
-const pages = ["index.html", "research/CVE-2026-20516/index.html"];
+const englishPages = [
+  "index.html",
+  "research/CVE-2026-20516/index.html",
+  "research/linux-antimalware/index.html",
+];
+const pages = [...englishPages, ...englishPages.map((page) => "it/" + page)];
 const read = (file) => fs.readFileSync(path.join(root, file), "utf8");
 
 for (const page of pages) {
@@ -83,7 +88,11 @@ test("homepage content, projects and article links are present without JavaScrip
     doc.body.textContent,
     /AES-256|PING:|TOOLS MASTERED|BOOT SEQUENCE/,
   );
-  assert.ok(doc.querySelector("noscript").textContent.includes("Hack The Box"));
+  assert.ok(
+    [...doc.querySelectorAll("noscript")].some((el) =>
+      el.textContent.includes("Hack The Box"),
+    ),
+  );
 });
 
 test("project details use native keyboard-operable disclosure rather than inaccessible modals", () => {

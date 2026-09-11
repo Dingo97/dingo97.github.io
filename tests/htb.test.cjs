@@ -111,7 +111,8 @@ test("empty updates clear previous rows rather than leaving stale data or a spin
     doc.getElementById("htb-challenges").textContent,
     /No recent challenges/,
   );
-  assert.doesNotMatch(doc.getElementById("htb").textContent, /Loading/);
+  for (const id of ["htb-machines", "htb-challenges", "htb-last-update"])
+    assert.doesNotMatch(doc.getElementById(id).textContent, /Loading/);
 });
 
 test("data is text, never executable markup; difficulty and OS classes are restricted", () => {

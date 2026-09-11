@@ -4,6 +4,13 @@
   const year = document.getElementById("year");
   if (year) year.textContent = new Date().getFullYear();
   const themes = ["green", "amber", "blue", "red"];
+  const italian = document.documentElement.lang === "it";
+  const themeNames = {
+    green: "verde",
+    amber: "ambra",
+    blue: "blu",
+    red: "rosso",
+  };
   const themeButton = document.querySelector(".theme-toggle");
   let theme = "green";
   try {
@@ -17,9 +24,13 @@
     if (themeButton) {
       themeButton.setAttribute(
         "aria-label",
-        `Accent colour: ${theme}. Change accent colour`,
+        italian
+          ? `Colore di accento: ${themeNames[theme]}. Cambia colore`
+          : `Accent colour: ${theme}. Change accent colour`,
       );
-      themeButton.title = `Accent colour: ${theme}. Click to change`;
+      themeButton.title = italian
+        ? `Colore di accento: ${themeNames[theme]}. Clicca per cambiare`
+        : `Accent colour: ${theme}. Click to change`;
     }
   }
   applyTheme();

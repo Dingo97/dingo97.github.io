@@ -219,6 +219,21 @@
   }
 
   function renderHTBData(data, doc = document, source = "fresh") {
+    const it = doc.documentElement.lang === "it";
+    const tr = (en, italian) => (it ? italian : en);
+    const translateAgo = (value) =>
+      !it
+        ? value
+        : value
+            .replace("just now", "adesso")
+            .replace("an hour ago", "un’ora fa")
+            .replace("hours ago", "ore fa")
+            .replace("a day ago", "un giorno fa")
+            .replace("days ago", "giorni fa")
+            .replace("a month ago", "un mese fa")
+            .replace("months ago", "mesi fa")
+            .replace("a year ago", "un anno fa")
+            .replace("years ago", "anni fa");
     const setText = (id, value) => {
       const element = doc.getElementById(id);
       if (element) element.textContent = String(value);
@@ -255,23 +270,26 @@
         icon.setAttribute(
           "aria-label",
           {
-            WIN: "Windows machine",
-            LIN: "Linux machine",
+            WIN: tr("Windows machine", "Macchina Windows"),
+            LIN: tr("Linux machine", "Macchina Linux"),
             CTF: "Challenge",
-            DFIR: "Sherlock investigation",
+            DFIR: tr("Sherlock investigation", "Indagine Sherlock"),
           }[kind],
         );
         name.append(icon, element("span", "htb-machine-title", item.name));
         const meta = element("span", "htb-machine-meta");
-        const ago = timeAgo(item.date);
+        const ago = translateAgo(timeAgo(item.date));
         if (ago) {
           const time = element("time", "htb-machine-date", ago);
           time.dateTime = item.date;
-          time.title = new Date(item.date).toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-          });
+          time.title = new Date(item.date).toLocaleDateString(
+            it ? "it-IT" : "en-US",
+            {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+            },
+          );
           meta.append(time);
         }
         const difficulty = normalizeDifficulty(item.difficulty);
@@ -279,7 +297,14 @@
           element(
             "span",
             "htb-machine-diff htb-diff-" + difficulty,
-            difficulty.charAt(0).toUpperCase() + difficulty.slice(1),
+            it
+              ? {
+                  easy: "Facile",
+                  medium: "Media",
+                  hard: "Difficile",
+                  insane: "Estrema",
+                }[difficulty]
+              : difficulty.charAt(0).toUpperCase() + difficulty.slice(1),
           ),
         );
         row.append(name, meta);
@@ -291,28 +316,41 @@
     renderRows(
       "htb-machines",
       safeItems(data.recentMachines).slice(0, 8),
-      "No recent machines in this update.",
+      tr(
+        "No recent machines in this update.",
+        "Nessuna macchina recente in questo aggiornamento.",
+      ),
     );
     renderRows(
       "htb-challenges",
       getActivity(data),
-      "No recent challenges or Sherlocks in this update.",
+      tr(
+        "No recent challenges or Sherlocks in this update.",
+        "Nessuna challenge o Sherlock recente in questo aggiornamento.",
+      ),
     );
     const updated = new Date(data.updated);
     const date = Number.isFinite(updated.getTime())
-      ? updated.toLocaleDateString("en-US", {
+      ? updated.toLocaleDateString(it ? "it-IT" : "en-US", {
           month: "short",
           day: "numeric",
           year: "numeric",
         })
-      : "date unavailable";
+      : tr("date unavailable", "data non disponibile");
     setText(
       "htb-last-update",
       source === "fresh"
-        ? "Updated: " + date
+        ? tr("Updated: ", "Aggiornato: ") + date
         : source === "loading"
-          ? "Saved snapshot: " + date + " · Refreshing…"
-          : "Saved snapshot: " + date + " · Latest update unavailable",
+          ? tr("Saved snapshot: ", "Copia salvata: ") +
+            date +
+            tr(" · Refreshing…", " · Aggiornamento…")
+          : tr("Saved snapshot: ", "Copia salvata: ") +
+            date +
+            tr(
+              " · Latest update unavailable",
+              " · Ultimo aggiornamento non disponibile",
+            ),
     );
   }
 
@@ -334,10 +372,15 @@
         }, timeoutMs);
       });
       const request = (async () => {
-        const response = await fetchImpl("htb-data.json?v=" + Date.now(), {
-          signal: controller.signal,
-          cache: "no-store",
-        });
+        const response = await fetchImpl(
+          (doc.documentElement.lang === "it" ? "../" : "") +
+            "htb-data.json?v=" +
+            Date.now(),
+          {
+            signal: controller.signal,
+            cache: "no-store",
+          },
+        );
         if (!response.ok) throw new Error("HTB JSON unavailable");
         const data = await response.json();
         if (

@@ -2,4 +2,8 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://dingo97.github.io/</loc></url>
   <url><loc>https://dingo97.github.io/research/CVE-2026-20516/</loc></url>
+  <url><loc>https://dingo97.github.io/research/linux-antimalware/</loc></url>
+  <url><loc>https://dingo97.github.io/it/</loc></url>
+  <url><loc>https://dingo97.github.io/it/research/CVE-2026-20516/</loc></url>
+  <url><loc>https://dingo97.github.io/it/research/linux-antimalware/</loc></url>
 </urlset>
