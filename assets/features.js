@@ -42,7 +42,7 @@
       line(
         tr(
           "Explore the portfolio. Type help to see all commands.",
-          "Esplora il portfolio. Scrivi help per vedere tutti i comandi.",
+          "Naviga nel portfolio con i comandi del terminale. Digita help per vedere quelli disponibili.",
         ),
       );
     welcome();
@@ -81,7 +81,7 @@
           line(
             tr(
               "Use ↑ / ↓ for command history and Tab to complete a command.",
-              "Usa ↑ / ↓ per la cronologia e Tab per completare un comando.",
+              "Usa ↑ / ↓ per richiamare i comandi precedenti e Tab per completarli.",
             ),
           );
           break;
@@ -89,7 +89,7 @@
           line(
             tr(
               "Davide Di Matteo · Cyber Security Specialist at Aeroporti di Roma. Vulnerability management, VAPT and independent research. Based in Rome.",
-              "Davide Di Matteo · Cyber Security Specialist presso Aeroporti di Roma. Vulnerability management, VAPT e ricerca indipendente. A Roma.",
+              "Sono Davide Di Matteo, Cyber Security Specialist presso Aeroporti di Roma. Mi occupo di gestione delle vulnerabilità, VAPT e ricerca indipendente sulla sicurezza.",
             ),
           );
           break;
@@ -122,7 +122,10 @@
           a.click();
           a.remove();
           line(
-            tr("Your CV download is ready.", "Il download del CV è pronto."),
+            tr(
+              "Your CV download is ready.",
+              "Download del CV italiano avviato.",
+            ),
           );
           break;
         }
@@ -136,7 +139,7 @@
         }
         case "theme":
           document.querySelector(".theme-toggle")?.click();
-          line(tr("Accent colour updated.", "Colore di accento aggiornato."));
+          line(tr("Accent colour updated.", "Colore del tema cambiato."));
           break;
         case "clear":
           output.replaceChildren();
@@ -245,7 +248,7 @@
       next.textContent =
         index === 2
           ? tr("Start again ↺", "Ricomincia ↺")
-          : tr("Next stage →", "Passaggio successivo →");
+          : tr("Next stage →", "Avanti →");
     }
     buttons.forEach((b, i) => {
       b.addEventListener("click", () => show(i));

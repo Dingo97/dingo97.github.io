@@ -318,7 +318,7 @@
       safeItems(data.recentMachines).slice(0, 8),
       tr(
         "No recent machines in this update.",
-        "Nessuna macchina recente in questo aggiornamento.",
+        "Non ci sono macchine recenti da mostrare.",
       ),
     );
     renderRows(
@@ -326,7 +326,7 @@
       getActivity(data),
       tr(
         "No recent challenges or Sherlocks in this update.",
-        "Nessuna challenge o Sherlock recente in questo aggiornamento.",
+        "Non ci sono challenge o Sherlock recenti da mostrare.",
       ),
     );
     const updated = new Date(data.updated);
@@ -342,14 +342,14 @@
       source === "fresh"
         ? tr("Updated: ", "Aggiornato: ") + date
         : source === "loading"
-          ? tr("Saved snapshot: ", "Copia salvata: ") +
+          ? tr("Saved snapshot: ", "Dati salvati il ") +
             date +
-            tr(" · Refreshing…", " · Aggiornamento…")
-          : tr("Saved snapshot: ", "Copia salvata: ") +
+            tr(" · Refreshing…", " · Aggiornamento in corso…")
+          : tr("Saved snapshot: ", "Dati salvati il ") +
             date +
             tr(
               " · Latest update unavailable",
-              " · Ultimo aggiornamento non disponibile",
+              " · Non è stato possibile recuperare dati più recenti",
             ),
     );
   }

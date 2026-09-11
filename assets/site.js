@@ -25,11 +25,11 @@
       themeButton.setAttribute(
         "aria-label",
         italian
-          ? `Colore di accento: ${themeNames[theme]}. Cambia colore`
+          ? `Colore del tema: ${themeNames[theme]}. Cambia colore`
           : `Accent colour: ${theme}. Change accent colour`,
       );
       themeButton.title = italian
-        ? `Colore di accento: ${themeNames[theme]}. Clicca per cambiare`
+        ? `Colore del tema: ${themeNames[theme]}. Clicca per cambiare`
         : `Accent colour: ${theme}. Click to change`;
     }
   }

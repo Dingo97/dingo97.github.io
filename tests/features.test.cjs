@@ -254,9 +254,37 @@ test("Italian runtime labels stay in Italian after changing the accent", () => {
   doc.querySelector(".theme-toggle").click();
   assert.match(
     doc.querySelector(".theme-toggle").getAttribute("aria-label"),
-    /Colore di accento/,
+    /Colore del tema/,
   );
   dom.window.close();
+});
+
+test("Italian labels use Italian word order across visual line breaks", () => {
+  const doc = new JSDOM(read("it/index.html")).window.document;
+  const phrase = doc.querySelector(".trust-proof > span").cloneNode(true);
+  phrase.querySelectorAll("br").forEach((br) => br.replaceWith(" "));
+  assert.equal(normalize(phrase.textContent), "CVE riconosciuta");
+});
+
+test("Italian prose preserves word boundaries and punctuation beside inline code", () => {
+  for (const page of routes.slice(1)) {
+    const doc = new JSDOM(read("it/" + page)).window.document;
+    for (const code of doc.querySelectorAll("p code")) {
+      const next = code.nextSibling;
+      if (next?.nodeType !== 3 || !next.textContent.trim()) continue;
+      if (/^[\p{L}\p{N}]/u.test(next.textContent.trim()))
+        assert.match(
+          next.textContent,
+          /^\s/,
+          `Missing space after ${code.textContent}`,
+        );
+      assert.doesNotMatch(
+        next.textContent,
+        /^\s+[,.;:!?]/,
+        `Space before punctuation after ${code.textContent}`,
+      );
+    }
+  }
 });
 
 test("thesis matrix preserves the seven products and the recorded Sophos/Avast exceptions", () => {

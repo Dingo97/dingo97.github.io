@@ -28,13 +28,13 @@
       last = rows.at(-1);
     doc.getElementById("history-status").textContent = tr(
       `Recording since ${fmt(first.date)} · ${rows.length} snapshots`,
-      `Rilevazioni dal ${fmt(first.date)} · ${rows.length} snapshot`,
+      `Rilevazioni dal ${fmt(first.date)} · ${rows.length} ${rows.length === 1 ? "giorno registrato" : "giorni registrati"}`,
     );
     container.replaceChildren();
     const summary = node("div", "history-summary");
     for (const [key, label] of [
-      ["systemOwns", tr("system owns", "system owns")],
-      ["userOwns", tr("user owns", "user owns")],
+      ["systemOwns", tr("system owns", "flag di sistema")],
+      ["userOwns", tr("user owns", "flag utente")],
     ]) {
       const a = safe(first.profile[key]),
         b = safe(last.profile[key]);
@@ -54,24 +54,27 @@
     container.append(summary);
     if (rows.length > 1) {
       const labels = {
-        systemOwns: "System owns",
-        userOwns: "User owns",
+        systemOwns: tr("System owns", "Flag di sistema"),
+        userOwns: tr("User owns", "Flag utente"),
         ranking: tr(
           "Global rank (lower is better)",
-          "Posizione globale (più bassa è meglio)",
+          "Classifica (il primo posto è il migliore)",
         ),
       };
       const controls = node("div", "history-controls");
       controls.setAttribute("role", "group");
       controls.setAttribute(
         "aria-label",
-        tr("Chart metric", "Metrica del grafico"),
+        tr("Chart metric", "Dato da visualizzare"),
       );
       const chart = node("div", "history-chart");
       chart.setAttribute("role", "group");
       chart.setAttribute(
         "aria-label",
-        tr("Recorded profile statistics", "Statistiche del profilo registrate"),
+        tr(
+          "Recorded profile statistics",
+          "Andamento delle statistiche del profilo",
+        ),
       );
       const inspector = node("p", "history-inspector");
       inspector.setAttribute("aria-live", "polite");
@@ -125,7 +128,7 @@
     const summaryText = node(
       "summary",
       "text-link",
-      tr("View recorded snapshots", "Vedi le rilevazioni registrate"),
+      tr("View recorded snapshots", "Mostra lo storico completo"),
     );
     details.append(summaryText);
     const wrap = node("div", "history-table-wrap");
@@ -135,7 +138,7 @@
       "sr-only",
       tr(
         "Recorded HTB profile snapshots",
-        "Rilevazioni registrate del profilo HTB",
+        "Statistiche giornaliere del profilo HTB",
       ),
     );
     table.append(caption);
@@ -143,10 +146,10 @@
     const heading = node("tr");
     for (const label of [
       tr("Date", "Data"),
-      "Rank",
-      "User owns",
-      "System owns",
-      tr("Global position", "Posizione globale"),
+      tr("Rank", "Livello"),
+      tr("User owns", "Flag utente"),
+      tr("System owns", "Flag di sistema"),
+      tr("Global position", "Posizione in classifica"),
     ]) {
       const th = node("th", "", label);
       th.scope = "col";
@@ -175,11 +178,11 @@
       rows.length === 1
         ? tr(
             "The first snapshot is recorded. A trend will appear after the next daily update. Earlier activity has not been reconstructed.",
-            "La prima rilevazione è registrata. Il grafico apparirà dopo il prossimo aggiornamento giornaliero. Le attività precedenti non sono state ricostruite.",
+            "Lo storico è appena iniziato. Il grafico comparirà quando saranno disponibili i dati di una seconda giornata. Non sono disponibili dati storici precedenti alla prima rilevazione.",
           )
         : tr(
             "The chart shows up to 30 recorded snapshots. Each bar is a recorded date; missing days are not estimated.",
-            "Il grafico mostra fino a 30 rilevazioni. Ogni barra corrisponde a una data registrata; i giorni mancanti non sono stimati.",
+            "Il grafico mostra gli ultimi 30 giorni per cui sono disponibili dati. Ogni barra corrisponde a una giornata registrata; i giorni senza dati vengono omessi.",
           );
     container.append(node("p", "history-note", note));
   }
@@ -215,7 +218,7 @@
       const p = doc.createElement("p");
       p.className = "htb-empty";
       p.textContent = it
-        ? "Le statistiche e le attività recenti restano disponibili sopra."
+        ? "Puoi comunque consultare le statistiche e le attività recenti nella sezione precedente."
         : "Profile statistics and recent activity remain available above.";
       doc.getElementById("history-content").replaceChildren(p);
     } finally {

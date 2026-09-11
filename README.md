@@ -40,6 +40,8 @@ English HTML files are the source pages. Italian pages are committed static HTML
 
 To edit translated prose, update the corresponding entries in `content/translations/en.*.json` and `it.*.json`, then run `npm run build:locales`. For new source text, `node scripts/build-locales.cjs --extract` refreshes English segment lists; align the Italian entries by their matching English text before building. The builder rejects missing translations. Do not edit generated Italian HTML directly.
 
+Italian text is edited as native copy, preserving technical meaning rather than English sentence structure. Read complete paragraphs after regeneration, especially around inline code and links. `content/translations/it.phrases.json` supplies complete short labels where Italian requires a different word order across line breaks. Dynamic interface text lives in the shared JavaScript files; changes to Italian wording must preserve English strings and HTB data behaviour.
+
 The optional terminal opens with its header button or Ctrl/Cmd+K. It supports `help`, `whoami`, `research`, `thesis`, `cve`, `projects`, `htb`, `cv`, `contact`, `theme`, `clear` and `exit`, plus command history and completion. These are portfolio navigation actions. Native dialog handling supplies keyboard focus management; normal links remain available when dialog support is absent.
 
 The CVE explainer is progressively enhanced: all three explanations are readable without JavaScript. Its stages preserve the distinction between the documented ADB reproduction and an untested ordinary-app reproduction, and do not imply a root or system shell.

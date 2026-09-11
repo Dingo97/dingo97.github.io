@@ -8,6 +8,12 @@ const pages = [
   ["thesis", "research/linux-antimalware/index.html"],
 ];
 const normalize = (text) => text.replace(/\s+/g, " ").trim();
+const italianPhrases = JSON.parse(
+  fs.readFileSync(
+    path.join(root, "content/translations/it.phrases.json"),
+    "utf8",
+  ),
+);
 function segments(doc) {
   const entries = [];
   const walker = doc.createTreeWalker(doc.documentElement, 4);
@@ -81,13 +87,36 @@ if (process.argv.includes("--extract")) {
         throw new Error(`Untranslated ${name} text: ${entry.text}`);
       if (entry.node) {
         const before = entry.node.textContent;
+        const translated = map.get(entry.text);
+        const previous = entry.node.previousSibling;
+        const followsInlineText =
+          previous?.nodeType === 1 &&
+          /^(CODE|STRONG|EM|A|SPAN|SMALL|B|I)$/.test(previous.nodeName) &&
+          previous.textContent.trim();
+        const leadingSpace = /^[,.;:!?]/.test(translated)
+          ? ""
+          : /^\s/.test(before) ||
+              (followsInlineText && /^[\p{L}\p{N}]/u.test(translated))
+            ? " "
+            : "";
         entry.node.textContent =
-          (/^\s/.test(before) ? " " : "") +
-          map.get(entry.text) +
-          (/\s$/.test(before) ? " " : "");
+          leadingSpace + translated + (/\s$/.test(before) ? " " : "");
       } else entry.element.setAttribute(entry.attr, map.get(entry.text));
     }
     doc.documentElement.lang = "it";
+    // Translate whole labels when Italian requires a different word order.
+    for (const [selector, lines] of Object.entries(
+      italianPhrases[name] || {},
+    )) {
+      const matches = doc.querySelectorAll(selector);
+      if (matches.length !== 1 || !Array.isArray(lines) || !lines.length)
+        throw new Error(`Invalid Italian phrase: ${name} ${selector}`);
+      matches[0].replaceChildren();
+      lines.forEach((line, index) => {
+        if (index) matches[0].append(doc.createElement("br"));
+        matches[0].append(doc.createTextNode(line));
+      });
+    }
     const enRoute = page.replace(/index\.html$/, "");
     const itRoute = "it/" + enRoute;
     doc.body.dataset.home =
