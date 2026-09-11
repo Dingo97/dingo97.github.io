@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Davide Di Matteo — Cyber Security Specialist. Vulnerability Management, VAPT, Cyber Defence & Incident Response @ Aeroporti di Roma.">
-    <meta name="keywords" content="cybersecurity, vulnerability management, VAPT, cyber defence, incident response, PSNC, rome, italy, airport security">
+    <meta name="description" content="Davide Di Matteo — Cyber Security Specialist. Vulnerability Management, VAPT, Cyber Defence, Incident Response and CVE research.">
+    <meta name="keywords" content="cybersecurity, vulnerability management, VAPT, cyber defence, incident response, PSNC, cve research, CVE-2026-20516, rome, italy, airport security">
     <meta name="author" content="Davide Di Matteo">
     <meta property="og:title" content="Davide Di Matteo | Cyber Security Specialist">
-    <meta property="og:description" content="Cybersecurity Portfolio — Vulnerability Management, VAPT, Cyber Defence @ Aeroporti di Roma">
+    <meta property="og:description" content="Cybersecurity Portfolio — Vulnerability Management, VAPT, Cyber Defence and CVE research">
     <meta property="og:type" content="website">
     
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self';">
@@ -586,6 +586,55 @@
         }
 
         /* ══════════════════════════════════════════════
+           RESEARCH
+           ══════════════════════════════════════════════ */
+        .research-card {
+            background: var(--panel-bg); border: 1px solid var(--border);
+            position: relative; overflow: hidden; transition: all 0.4s;
+        }
+        .research-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%;
+            background: var(--accent); opacity: 0.8;
+        }
+        .research-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 25px var(--accent-dim);
+            transform: translateY(-3px);
+        }
+        .research-shell {
+            background: var(--bg-secondary); border-bottom: 1px solid var(--border);
+            padding: 8px 14px; color: var(--text-muted); font-size: 0.72rem;
+            display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+        }
+        .research-body { padding: 24px; }
+        .research-title {
+            color: var(--text-main); font-size: 1.2rem; margin-bottom: 10px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .research-title i { color: var(--accent); font-size: 1rem; }
+        .research-meta {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+            background: var(--border); border: 1px solid var(--border); margin: 20px 0;
+        }
+        .research-meta-item {
+            background: var(--bg-color); padding: 14px 12px;
+        }
+        .research-meta-label {
+            color: var(--text-muted); font-size: 0.65rem; text-transform: uppercase;
+            letter-spacing: 1px; margin-bottom: 3px;
+        }
+        .research-meta-value {
+            color: var(--accent); font-weight: 700; font-size: 0.85rem;
+            overflow-wrap: anywhere;
+        }
+        .research-actions {
+            display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px;
+        }
+        @media (max-width: 768px) {
+            .research-meta { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        /* ══════════════════════════════════════════════
            PROJECTS
            ══════════════════════════════════════════════ */
         .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
@@ -814,6 +863,7 @@
                     <li><a href="#experience" data-status="Experience" data-section="experience">~/exp</a></li>
                     <li><a href="#certs" data-status="Certifications" data-section="certs">~/certs</a></li>
                     <li><a href="#htb" data-status="Hack The Box" data-section="htb">~/htb</a></li>
+                    <li><a href="#research" data-status="Research" data-section="research">~/research</a></li>
                     <li><a href="#projects" data-status="Projects" data-section="projects">~/projects</a></li>
                     <li><a href="#contact" data-status="Contact" data-section="contact">~/contact</a></li>
                     <li><button class="theme-btn" onclick="toggleTheme()" data-status="Switch Theme">[THEME]</button></li>
@@ -843,6 +893,7 @@
                 <span class="hero-tag">SECURITY+</span>
                 <span class="hero-tag">VULNERABILITY MGMT</span>
                 <span class="hero-tag">VAPT</span>
+                <a href="research/CVE-2026-20516/" class="hero-tag" style="text-decoration:none; cursor:pointer;">CVE-2026-20516</a>
                 <span class="hero-tag">PSNC</span>
                 <a href="#htb" class="hero-tag htb-hero-tag" style="text-decoration:none; cursor:pointer;">
                     <svg viewBox="0 0 711.09 823.41" xmlns="http://www.w3.org/2000/svg" style="width:10px;height:10px;fill:currentColor;vertical-align:middle;margin-right:4px;">
@@ -884,8 +935,8 @@
                 <div class="stat-label">Machines Pwned</div>
             </div>
             <div class="stat-item">
-                <div class="stat-number" data-count="3">0</div>
-                <div class="stat-label">Technical Projects</div>
+                <div class="stat-number" data-count="1">0</div>
+                <div class="stat-label">CVEs Credited</div>
             </div>
             <div class="stat-item">
                 <div class="stat-number" data-count="7">0</div>
@@ -1128,15 +1179,65 @@
             </div>
         </section>
 
+        <!-- ═══ RESEARCH ═══ -->
+        <section id="research">
+            <h2 class="reveal">06_RESEARCH.cve</h2>
+            <article class="research-card reveal" data-status="CVE-2026-20516">
+                <div class="research-shell">
+                    <span>davide@kali:~/research/CVE-2026-20516</span>
+                    <span>[DISCLOSED]</span>
+                </div>
+                <div class="research-body">
+                    <h3 class="research-title"><i class="fas fa-shield-virus"></i>CVE-2026-20516: MiracastService confused deputy</h3>
+                    <p>
+                        My first credited CVE: an improperly exported, system-privileged MediaTek Android TV Miracast service
+                        that could be triggered locally to change Wi-Fi Direct state using the service's own authority.
+                    </p>
+                    <div class="research-meta">
+                        <div class="research-meta-item">
+                            <div class="research-meta-label">Severity</div>
+                            <div class="research-meta-value">Medium</div>
+                        </div>
+                        <div class="research-meta-item">
+                            <div class="research-meta-label">CVSS v3.1</div>
+                            <div class="research-meta-value">5.5</div>
+                        </div>
+                        <div class="research-meta-item">
+                            <div class="research-meta-label">Weakness</div>
+                            <div class="research-meta-value">CWE-926</div>
+                        </div>
+                        <div class="research-meta-item">
+                            <div class="research-meta-label">Published</div>
+                            <div class="research-meta-value">Sep 7, 2026</div>
+                        </div>
+                    </div>
+                    <p>
+                        The write-up includes the original ADB reproduction, logcat evidence, tested device details,
+                        vendor references and the limits of what the public evidence demonstrates.
+                    </p>
+                    <div class="card-tags" style="padding-top:0;">
+                        <span class="tag">Android TV</span>
+                        <span class="tag">MediaTek</span>
+                        <span class="tag">Miracast</span>
+                        <span class="tag">Confused Deputy</span>
+                    </div>
+                    <div class="research-actions">
+                        <a href="research/CVE-2026-20516/" class="btn btn-sm"><span>READ WRITE-UP</span> <i class="fas fa-arrow-right"></i></a>
+                        <a href="https://github.com/Dingo97/CVE-2026-20516" target="_blank" class="btn btn-sm btn-outline" rel="noopener"><i class="fab fa-github"></i> <span>POC REPO</span></a>
+                    </div>
+                </div>
+            </article>
+        </section>
+
         <!-- ═══ PROJECTS ═══ -->
         <section id="projects">
-            <h2 class="reveal">06_PROJECTS.sh</h2>
+            <h2 class="reveal">07_PROJECTS.sh</h2>
             <div class="projects-grid" id="projects-container"></div>
         </section>
 
         <!-- ═══ CONTACT ═══ -->
         <section id="contact">
-            <h2 class="reveal">07_CONTACT.msg</h2>
+            <h2 class="reveal">08_CONTACT.msg</h2>
             
             <div class="contact-info reveal">
                 <div class="contact-info-item"><i class="fas fa-map-marker-alt"></i> Rome, Italy</div>
@@ -1597,6 +1698,7 @@
                     experience: '~/experience',
                     certs: '~/certifications',
                     htb: '~/hackthebox',
+                    research: '~/research',
                     projects: '~/projects',
                     contact: '~/contact'
                 };
