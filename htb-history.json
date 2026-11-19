@@ -759,6 +759,17 @@
         "ranking": 1010,
         "points": 2
       }
+    },
+    {
+      "date": "2026-11-19",
+      "recordedAt": "2026-11-19T14:56:44.966Z",
+      "profile": {
+        "rank": "Hacker",
+        "userOwns": 35,
+        "systemOwns": 25,
+        "ranking": 1021,
+        "points": 2
+      }
     }
   ]
 }
