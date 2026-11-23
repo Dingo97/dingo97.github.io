@@ -803,6 +803,17 @@
         "ranking": 986,
         "points": 2
       }
+    },
+    {
+      "date": "2026-11-23",
+      "recordedAt": "2026-11-23T16:54:11.586Z",
+      "profile": {
+        "rank": "Hacker",
+        "userOwns": 35,
+        "systemOwns": 25,
+        "ranking": 1000,
+        "points": 2
+      }
     }
   ]
 }
